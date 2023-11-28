@@ -4,6 +4,7 @@ import router from './router'
 
 const app = createApp(App)
 
+
 const global = app.config.globalProperties;
 global.loadContext = function() {
     let context = localStorage.context;
