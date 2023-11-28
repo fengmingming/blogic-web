@@ -7,7 +7,7 @@ const router = useRouter()
 <template>
   <MainContainer>
     <el-button @click="router.push('/login')">
-      登录
+      Home
     </el-button>
   </MainContainer>
 </template>

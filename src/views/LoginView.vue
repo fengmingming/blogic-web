@@ -7,7 +7,6 @@ const loginData = ref({
 })
 const router = useRouter()
 function onSubmit() {
-    console.log(loginData.value)
     router.push('/')
 }
 </script>

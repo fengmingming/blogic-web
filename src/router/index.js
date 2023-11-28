@@ -12,6 +12,36 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/model',
+      name: 'model',
+      component: () => import('../views/ModelView.vue')
+    },
+    {
+      path: '/requirement',
+      name: 'requirement',
+      component: () => import('../views/RequirementView.vue')
+    },
+    {
+      path: '/iteration',
+      name: 'iteration',
+      component: () => import('../views/IterationView.vue')
+    },
+    {
+      path: '/task',
+      name: 'task',
+      component: () => import('../views/TaskView.vue')
+    },
+    {
+      path: '/bug',
+      name: 'bug',
+      component: () => import('../views/BugView.vue')
+    },
+    {
+      path: '/statistics',
+      name: 'statistics',
+      component: () => import('../views/StatisticsView.vue')
     }
   ]
 })
