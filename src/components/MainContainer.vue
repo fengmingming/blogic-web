@@ -7,12 +7,17 @@ import IterationsPng from '../icons/iterations.png'
 import BugPng from '../icons/bug.png'
 import TaskPng from '../icons/task.png'
 import StatisticsPng from '../icons/statistics.png'
+import UserPng from '../icons/user.png'
 
 const global = getCurrentInstance().appContext.config.globalProperties;
 const userIcon = ref()
 const router = useRouter()
 onMounted(() => {
-    userIcon.value = global.loadContext()?.userIcon
+    if(global.loadContext()) {
+        userIcon.value = global.loadContext()?.userIcon
+    }else {
+        userIcon.value = UserPng
+    }
 })
 function routerPush(path) {
     router.push(path)
@@ -24,7 +29,7 @@ function logout() {
 <template>
     <el-container>
         <el-aside class="b_aside">
-            <el-avatar shape="square" :size="35" :src="userIcon" />
+            <el-avatar shape="square" :size="35" :src="userIcon"/>
             <el-menu :collapse="true">
                 <el-menu-item index="1" @click="routerPush('/model')">
                     <el-image :src="ModelPng"/>
