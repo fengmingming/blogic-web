@@ -91,6 +91,15 @@ function logout() {
     width: 23px;
     height: 23px;
 }
+.b_aside .el-avatar {
+    background-color: #ecf5ff;
+}
+.b_aside .el-menu {
+    margin-top: 50px;
+}
+.b_aside .el-menu-item {
+    background-color: #ecf5ff;
+}
 .b_header {
     background-color: #ecf5ff;
     height: auto;
@@ -99,8 +108,5 @@ function logout() {
 }
 .b_header .setting {
     margin-right: 30px;
-}
-.b_aside .el-menu-item {
-    background-color: #ecf5ff;
 }
 </style>
