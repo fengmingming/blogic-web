@@ -9,17 +9,21 @@ import TaskPng from '../icons/task.png'
 import StatisticsPng from '../icons/statistics.png'
 import UserPng from '../icons/user.png'
 import ProductPng from '../icons/product.png'
-
+import * as blogic from '../blogic'
 const userIcon = ref()
 const router = useRouter()
 onMounted(() => {
+    if(!blogic.isLogin()) {
+        blogic.toLoginView()
+        return
+    }
     userIcon.value = UserPng
 })
 function routerPush(path) {
     router.push(path)
 }
 function logout() {
-    router.push('/login')
+    blogic.logout()
 }
 </script>
 <template>

@@ -1,5 +1,6 @@
 import router from './router'
 import _axios from 'axios'
+import {ElMessage} from 'element-plus'
 
 function loadContext() {
     let context = localStorage.context;
@@ -15,11 +16,12 @@ function storeContext(context) {
 
 function isLogin() {
     let context = loadContext()
-    return context?true:false  
+    return context.token?true:false  
 }
 
 function logout() {
-    storeContext(null)
+    storeContext({})
+    toLoginView()
 }
 
 function toLoginView() {
@@ -48,25 +50,27 @@ axiosInstance.interceptors.request.use(function(config) {
 })
 
 axiosInstance.interceptors.response.use(function(res) {
-    return res
-}, function (error) {
-    return Promise.reject(error)
-})
-
-storeContext({
-    token: '',
-    userId: 0,
-    companies: [{
-        companyId:1,
-        companyName:"公司1",
-    },{
-        companyId:2,
-        companyName:"公司2"
-    }],
-    currentCompany: {
-        companyId:1,
-        companyName:"公司1"
+    console.log(res)
+    if(res.status === 200) {
+        res.data.elMessage = function() {
+            if(res.data.code > 0) {
+                ElMessage('服务异常：' + res.data.codeDesc);
+            }
+        }
+        if(res.data.code === 401) {
+            ElMessage('请重新登录')
+            router.push('/login')
+            return null;
+        }
+        return res.data;
+    }else {
+        ElMessage('请求异常' + res.statusText)
+        return null;
     }
+}, function (error) {
+    console.log(error)
+    ElMessage('请求异常')
+    return Promise.reject(error)
 })
 
 export {
@@ -75,6 +79,7 @@ export {
     isLogin,
     logout,
     toLoginView,
+    login,
 }
 
 export const axios = axiosInstance

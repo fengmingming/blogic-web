@@ -11,21 +11,20 @@ function onSubmit() {
     blogic.login({
         phone: loginData.value.phone,
         password: loginData.value.password,
-        terminal: 'pc',
+        terminal: 'PC',
     }).then(res => {
-        if(res.code === 0) {
-            let context = blogic.loadContext()
-            context.userId = res.data.userId
-            context.token = res.data.token
-            blogic.storeContext(context)
-            router.push('/')
-        }else {
-            ElMessage(res.codeDesc)
+        if(res) {
+            if(res.code == 0) {
+                let context = blogic.loadContext()
+                context.userId = res.data.userId
+                context.token = res.data.token
+                blogic.storeContext(context)
+                router.push('/')
+            }else {
+                res.elMessage()
+            }
         }
-    }).then(error => {
-        console.log(error)
-        ElMessage('服务异常')
-    })
+    });
 }
 </script>
 <template>
