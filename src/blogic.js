@@ -1,7 +1,5 @@
-import {useRouter} from 'vue-router'
-import axios from 'axios'
-
-const router = useRouter()
+import router from './router'
+import _axios from 'axios'
 
 function loadContext() {
     let context = localStorage.context;
@@ -28,8 +26,8 @@ function toLoginView() {
     router.push('/login')
 }
 
-const axiosInstance = axios.create({
-    baseURL: 'http://localhost:6666',
+const axiosInstance = _axios.create({
+    baseURL: 'http://localhost:6060/blogic',
     timeout: 30000
 })
 
@@ -52,37 +50,18 @@ axiosInstance.interceptors.response.use(function(res) {
 })
 
 storeContext({
+    token: '',
+    userId: 0,
     companies: [{
         companyId:1,
         companyName:"公司1",
-        products:[{
-            productId:1,
-            productName:'项目1'
-        },{
-            productId:2,
-            productName:'项目2'
-        }]
     },{
         companyId:2,
-        companyName:"公司2",
-        products:[{
-            productId:3,
-            productName:'项目3'
-        },{
-            productId:4,
-            productName:'项目4'
-        }]
+        companyName:"公司2"
     }],
     currentCompany: {
         companyId:1,
-        companyName:"公司1",
-        products:[{
-            productId:1,
-            productName:'项目1'
-        },{
-            productId:2,
-            productName:'项目2'
-        }]
+        companyName:"公司1"
     }
 })
 

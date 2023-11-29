@@ -8,7 +8,7 @@ import BugPng from '../icons/bug.png'
 import TaskPng from '../icons/task.png'
 import StatisticsPng from '../icons/statistics.png'
 import UserPng from '../icons/user.png'
-import ProjectPng from '../icons/project.png'
+import ProductPng from '../icons/product.png'
 
 const userIcon = ref()
 const router = useRouter()
@@ -27,8 +27,8 @@ function logout() {
         <el-aside class="b_aside">
             <el-avatar shape="square" :size="35" :src="userIcon"/>
             <el-menu :collapse="true">
-                <el-menu-item index="1" @click="routerPush('/project')">
-                    <el-image :src="ProjectPng"/>
+                <el-menu-item index="1" @click="routerPush('/product')">
+                    <el-image :src="ProductPng"/>
                     <template #title>项目</template>
                 </el-menu-item>
                 <el-menu-item index="1" @click="routerPush('/model')">
@@ -59,7 +59,7 @@ function logout() {
         </el-aside>
         <el-container>
             <el-header class="b_header">
-                <el-row :align="bottom">
+                <el-row>
                     <el-col :span="23" style="padding-top: 5px">
                         <slot name="header"></slot>
                     </el-col>
