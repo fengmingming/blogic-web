@@ -33,10 +33,10 @@ function onSubmit() {
         <el-col :span="4" :offset="6">
             <el-form :model="loginData" label-position="top">
                 <el-form-item label="手机号">
-                    <el-input v-model="loginData.phone" />
+                    <el-input v-model="loginData.phone" :minLength="11" :maxLength="11"/>
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input v-model="loginData.password" type="password"/>
+                    <el-input v-model="loginData.password" :type="password"/>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">登录</el-button>

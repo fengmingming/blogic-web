@@ -11,7 +11,6 @@ async function companyDropDownSelected(company) {
     currentCompany.value = company
     context.currentCompany = company
     let resPromise = await blogic.axios.get('/Companies/' + company.companyId)
-    console.log(resPromise)
 }
 
 </script>
