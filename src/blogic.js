@@ -26,6 +26,10 @@ function toLoginView() {
     router.push('/login')
 }
 
+function login(req) {
+    return axios.post('/login', req);
+}
+
 const axiosInstance = _axios.create({
     baseURL: 'http://localhost:6060/blogic',
     timeout: 30000

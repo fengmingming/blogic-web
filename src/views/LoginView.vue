@@ -1,13 +1,31 @@
 <script setup>
-import {reactive,ref} from 'vue'
+import {ref} from 'vue'
 import {useRouter} from 'vue-router'
+import * as blogic from '../blogic'
 const loginData = ref({
-    name: '',
+    phone: '',
     password: ''
 })
 const router = useRouter()
 function onSubmit() {
-    router.push('/')
+    blogic.login({
+        phone: loginData.value.phone,
+        password: loginData.value.password,
+        terminal: 'pc',
+    }).then(res => {
+        if(res.code === 0) {
+            let context = blogic.loadContext()
+            context.userId = res.data.userId
+            context.token = res.data.token
+            blogic.storeContext(context)
+            router.push('/')
+        }else {
+            ElMessage(res.codeDesc)
+        }
+    }).then(error => {
+        console.log(error)
+        ElMessage('服务异常')
+    })
 }
 </script>
 <template>
@@ -15,8 +33,8 @@ function onSubmit() {
         <el-col :span="8"></el-col>
         <el-col :span="4" :offset="6">
             <el-form :model="loginData" label-position="top">
-                <el-form-item label="用户名">
-                    <el-input v-model="loginData.name" />
+                <el-form-item label="手机号">
+                    <el-input v-model="loginData.phone" />
                 </el-form-item>
                 <el-form-item label="密码">
                     <el-input v-model="loginData.password" type="password"/>

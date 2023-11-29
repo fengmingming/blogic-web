@@ -1,12 +1,17 @@
 <script setup>
 import {useRouter} from 'vue-router'
-
+import * as blogic from '../blogic'
 const router = useRouter()
-</script>
+const context = blogic.loadContext()
+if(!context.token) {
+  router.push('/login')
+}else {
 
+}
+</script>
 <template>
   <MainContainer>
-    <el-button @click="router.push('/login')">
+    <el-button>
       Home
     </el-button>
   </MainContainer>
