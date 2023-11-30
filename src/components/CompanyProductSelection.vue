@@ -12,24 +12,28 @@ const selectedProduct = ref({})
 
 async function companyDropDownSelected(company) {
     selectedCompany.value = company
-    await User.switchCompany(company.companyId)
-    console.log(2)
+    blogic.handleResponse(await User.switchCompany(company.companyId))
     let context = blogic.loadContext()
     context.currentCompany = company
     blogic.storeContext(context)
-    console.log(21)
-    let productRes = await Product.findByCompanyId(company.companyId);
-    console.log(productRes)
-    console.log(22)
+    let productRes = blogic.handleResponse(await Product.findByCompanyId(company.companyId))
     products.value = productRes
-    if(products.length > 0)
-        selectedProduct = productRes[0]
+    if(productRes.length > 0) {
+        selectedProduct.value = productRes[0]
+    }
 }
 
 onMounted(() => {
     let context = blogic.loadContext()
     companies.value = context.companies
-    companyDropDownSelected(context.currentCompany)
+    selectedCompany.value = context.currentCompany
+    Product.findByCompanyId(context.currentCompany.companyId).then(res => {
+        let productRes = blogic.handleResponse(res)
+        products.value = productRes
+        if(productRes.length > 0) {
+            selectedProduct.value = productRes[0]
+        }
+    })
 })
 
 </script>

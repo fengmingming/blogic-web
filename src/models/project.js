@@ -19,14 +19,8 @@ class Product {
         this.createTime = arg.createTime
         this.updateTime = arg.updateTime
     }
-    static async findByCompanyId(companyId) {
-        let res = await axios.get('/Companies/' + companyId)
-        if(res?.code === 0) {
-            return res.data
-        }else {
-            res?.showCodeDesc()
-            throw res?res.codeDesc:blogic.InterruptOperation
-        }
+    static findByCompanyId(companyId) {
+        return axios.get('/Companies/' + companyId + '/Products?pageSize=1000&pageNum=1')
     }
 }
 
