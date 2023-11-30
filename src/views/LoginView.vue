@@ -4,8 +4,8 @@ import {useRouter} from 'vue-router'
 import * as blogic from '../blogic'
 
 const loginData = ref({
-    phone: '',
-    password: ''
+    phone: '13788888998',
+    password: '123456'
 })
 const router = useRouter()
 async function onSubmit() {
@@ -51,8 +51,10 @@ async function onSubmit() {
                 }else {
                     switchContextRes?.showCodeDesc()
                 }
+                router.push('/home')
+            }else {
+                router.push('/company')
             }
-            router.push('/')
             return;
         }else {
             res?.showCodeDesc()

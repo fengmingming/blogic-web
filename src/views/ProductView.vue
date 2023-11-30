@@ -5,10 +5,10 @@ import { ArrowRight } from '@element-plus/icons-vue'
 <template>
     <MainContainer>
         <template #header>
-            <CompanyProductSelection />
+            <CompanyProductSelection :showProduct=false>
+            </CompanyProductSelection>
         </template>
         <template #default>
-            <el-button>项目</el-button>
         </template>
     </MainContainer>
 </template>

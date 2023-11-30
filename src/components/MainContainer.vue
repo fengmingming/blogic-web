@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, defineProps} from 'vue'
 import {useRouter} from 'vue-router'
 import ModelPng from '../icons/model.png'
 import RequirementPng from '../icons/requirement.png'
@@ -10,26 +10,41 @@ import StatisticsPng from '../icons/statistics.png'
 import UserPng from '../icons/user.png'
 import ProductPng from '../icons/product.png'
 import * as blogic from '../blogic'
+const props = defineProps({
+    disableClick:{
+        type: Boolean,
+        default: false
+    },
+    disableClickMessage:{
+        type: String,
+        default: null
+    }
+})
 const userIcon = ref()
 const router = useRouter()
-onMounted(() => {
-    if(!blogic.isLogin()) {
-        blogic.toLoginView()
-        return
-    }
-    userIcon.value = UserPng
-})
 function routerPush(path) {
-    router.push(path)
+    if(props.disableClick) {
+        if(props.disableClickMessage) {
+            blogic.showWarn(props.disableClickMessage)
+        }
+    }else {
+        router.push(path)
+    }
 }
 function logout() {
     blogic.logout()
+}
+onMounted(() => {
+    userIcon.value = UserPng
+})
+if(!blogic.isLogin()) {
+    blogic.toLoginView()
 }
 </script>
 <template>
     <el-container>
         <el-aside class="b_aside">
-            <el-avatar shape="square" :size="35" :src="userIcon"/>
+            <el-avatar shape="square" :size="35" :src="userIcon" @click="routerPush('/company')"/>
             <el-menu :collapse="true">
                 <el-menu-item index="1" @click="routerPush('/product')">
                     <el-image :src="ProductPng"/>

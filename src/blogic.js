@@ -12,6 +12,7 @@ class UserContext {
         },
         this.companies = []
         this.currentCompany = null
+        this.currentProduct = null
     }
 }
 
@@ -23,6 +24,7 @@ function loadContext() {
 }
 
 function storeContext(context) {
+    console.log('storeContext', context)
     localStorage.setItem('context', JSON.stringify(context));
 }
 
@@ -99,10 +101,7 @@ axiosInstance.interceptors.response.use(function(res) {
             }
         }
         if(res.data.code === 401) {
-            showWarn({
-                message: '请重新登录',
-                type: 'warning'
-            })
+            showWarn('请重新登录')
             toLoginView()
             return null;
         }

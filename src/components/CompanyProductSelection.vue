@@ -1,10 +1,10 @@
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, defineProps} from 'vue'
 import { ArrowRight,ArrowDown } from '@element-plus/icons-vue'
 import * as blogic from '../blogic'
-import {Product} from '../models/project'
+import {Product} from '../models/product'
 import {User} from '../models/user'
-
+const props = defineProps({showProduct:{type: Boolean, default: true}})
 const companies = ref([])
 const selectedCompany = ref({})
 const products = ref([])
@@ -15,23 +15,39 @@ async function companyDropDownSelected(company) {
     blogic.handleResponse(await User.switchCompany(company.companyId))
     let context = blogic.loadContext()
     context.currentCompany = company
+    context.currentProduct = null
     blogic.storeContext(context)
-    let productRes = blogic.handleResponse(await Product.findByCompanyId(company.companyId))
+    selectedProduct.value = {}
+    let productRes = blogic.handleResponse(await Product.findByCompanyId(company.companyId, 1, 1000))
     products.value = productRes
     if(productRes.length > 0) {
         selectedProduct.value = productRes[0]
+        context.currentProduct = {productId: productRes[0].id, productName: productRes[0].productName}
+        blogic.storeContext(context)
     }
+}
+
+function productDropDownSelected(product) {
+    let context = blogic.loadContext()
+    selectedProduct.value = product
+    context.currentProduct = {productId: product.id, productName: product.productName}
+    blogic.storeContext(context)
 }
 
 onMounted(() => {
     let context = blogic.loadContext()
     companies.value = context.companies
     selectedCompany.value = context.currentCompany
+    if(context.currentProduct) {
+        selectedProduct.value = context.currentProduct
+    }
     Product.findByCompanyId(context.currentCompany.companyId).then(res => {
         let productRes = blogic.handleResponse(res)
         products.value = productRes
-        if(productRes.length > 0) {
+        if(productRes.length > 0 && context.currentProduct === null) {
             selectedProduct.value = productRes[0]
+            context.currentProduct = {productId: productRes[0].id, productName: productRes[0].productName}
+            blogic.storeContext(context)
         }
     })
 })
@@ -52,8 +68,8 @@ onMounted(() => {
                 </template>
             </el-dropdown>
         </el-breadcrumb-item>
-        <el-breadcrumb-item v-if="products.length > 0">
-            <el-dropdown trigger="click">
+        <el-breadcrumb-item v-if="products.length > 0 && props.showProduct">
+            <el-dropdown trigger="click" @command="productDropDownSelected">
                 <span class="el-dropdown-link">
                     {{ selectedProduct.productName }}
                     <el-icon><ArrowDown /></el-icon>

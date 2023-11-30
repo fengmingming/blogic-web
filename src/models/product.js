@@ -19,7 +19,7 @@ class Product {
         this.createTime = arg.createTime
         this.updateTime = arg.updateTime
     }
-    static findByCompanyId(companyId) {
+    static findByCompanyId(companyId, pageNum, pageSize) {
         return axios.get('/Companies/' + companyId + '/Products?pageSize=1000&pageNum=1')
     }
 }
