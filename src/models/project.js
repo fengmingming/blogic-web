@@ -3,18 +3,26 @@ const axios = blogic.axios
 
 function toProduct(datas) {
     let products = [];
-    for(data in datas) {
-
+    for(var data in datas) {
+        products.push(new Product(data))
     }
+    return products
 }
 /* model */
 class Product {
-    constructor() {
+    constructor(arg) {
+        this.id = arg.id
+        this.companyId = arg.companyId
+        this.productName = arg.productName
+        this.productDesc = arg.productDesc
+        this.createUserId = arg.createUserId
+        this.createTime = arg.createTime
+        this.updateTime = arg.updateTime
     }
     static async findByCompanyId(companyId) {
         let res = await axios.get('/Companies/' + companyId)
-
-        return res;
+        console.log(res)
+        return res
     }
 }
 

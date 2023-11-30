@@ -2,16 +2,27 @@ import router from './router'
 import _axios from 'axios'
 import {ElMessage} from 'element-plus'
 
-function loadContext() {
-    let context = localStorage.context;
-    if(context) {
-        return JSON.parse(context)
+class UserContext {
+    constructor() {
+        this.token = '',
+        this.user = {
+            userId: null,
+            userName: null,
+            phone: null
+        },
+        this.companies = []
     }
-    return context;
+}
+
+function loadContext() {
+    if(localStorage.key('context')) {
+        return JSON.parse(localStorage.getItem('context'))
+    }
+    return new UserContext();
 }
 
 function storeContext(context) {
-    localStorage.context = JSON.stringify(context);
+    localStorage.setItem('context', JSON.stringify(context));
 }
 
 function isLogin() {
@@ -20,7 +31,7 @@ function isLogin() {
 }
 
 function logout() {
-    storeContext({})
+    storeContext(new UserContext())
     toLoginView()
 }
 
@@ -30,6 +41,28 @@ function toLoginView() {
 
 function login(req) {
     return axios.post('/login', req);
+}
+
+function showError(message) {
+    ElMessage.error(message)
+}
+
+function showWarn(message) {
+    ElMessage({
+        message: message,
+        type: 'warning',
+    })
+}
+
+function showSuccess(message) {
+    ElMessage({
+        message: message,
+        type: 'success',
+    })
+}
+
+function showMessage(message) {
+    ElMessage(message)
 }
 
 const axiosInstance = _axios.create({
@@ -52,24 +85,27 @@ axiosInstance.interceptors.request.use(function(config) {
 axiosInstance.interceptors.response.use(function(res) {
     console.log(res)
     if(res.status === 200) {
-        res.data.elMessage = function() {
+        res.data.showCodeDesc = function() {
             if(res.data.code > 0) {
-                ElMessage('服务异常：' + res.data.codeDesc);
+                showError('服务异常：' + res.data.codeDesc);
             }
         }
         if(res.data.code === 401) {
-            ElMessage('请重新登录')
-            router.push('/login')
+            showWarn({
+                message: '请重新登录',
+                type: 'warning'
+            })
+            toLoginView()
             return null;
         }
         return res.data;
     }else {
-        ElMessage('请求异常' + res.statusText)
+        showError('请求异常' + res.statusText)
         return null;
     }
 }, function (error) {
     console.log(error)
-    ElMessage('请求异常')
+    showError('请求异常')
     return Promise.reject(error)
 })
 
@@ -80,6 +116,11 @@ export {
     logout,
     toLoginView,
     login,
+    showError,
+    showWarn,
+    showSuccess,
+    showMessage,
+    UserContext,
 }
 
 export const axios = axiosInstance
