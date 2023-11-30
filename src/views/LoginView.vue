@@ -8,47 +8,59 @@ const loginData = ref({
     password: ''
 })
 const router = useRouter()
-function onSubmit() {
-    blogic.login({
-        phone: loginData.value.phone,
-        password: loginData.value.password,
+async function onSubmit() {
+    let phone = loginData.value.phone.trim()
+    let password = loginData.value.password.trim()
+    if(phone.length != 11) {
+        blogic.showWarn('请输入正确手机号')
+        return
+    }
+    if(!password) {
+        blogic.showWarn('请输入密码')
+        return
+    }
+    let res = await blogic.login({
+        phone,
+        password,
         terminal: 'PC',
-    }).then(res => {
-        if(res) {
-            if(res.code == 0) {
-                let context = blogic.loadContext()
-                context.token = res.data.token
-                blogic.storeContext(context)
-                blogic.axios.get('/Users/' + res.data.userId).then(res => {
-                    if(res) {
-                        if(res.code == 0) {
-                            context.user.userId = res.data.userId
-                            context.user.userName = res.data.userName
-                            context.user.phone = res.data.phone
-                            res.data.companies.forEach(company => {
-                                context.companies.push({
-                                    companyId: company.companyId,
-                                    companyName: company.companyName,
-                                    admin: company.admin,
-                                    roles: company.roles
-                                })
-                            })
-                            blogic.storeContext(context)
-                            router.push('/')
-                            return;
-                        }else {
-                            res.showCodeDesc()
-                        }
-                    }
-                    blogic.storeContext(new blogic.UserContext())
-                }).catch(error => {
-                    blogic.storeContext(new blogic.UserContext())
-                })
-            }else {
-                res.showCodeDesc()
-            }
-        }
     });
+    if(res?.code === 0) {
+        let context = blogic.loadContext()
+        context.token = res.data.token
+        blogic.storeContext(context)
+        let userRes = await blogic.axios.get('/Users/' + res.data.userId);
+        if(userRes?.code === 0) {
+            context.user.userId = userRes.data.userId
+            context.user.userName = userRes.data.userName
+            context.user.phone = userRes.data.phone
+            userRes.data.companies.forEach(company => {
+                context.companies.push({
+                    companyId: company.companyId,
+                    companyName: company.companyName,
+                    admin: company.admin,
+                    roles: company.roles
+                })
+            })
+            blogic.storeContext(context)
+            if(context.companies.length === 1) {
+                let company = context.companies[0]
+                let switchContextRes = await blogic.axios.put('/Users/'+context.user.userId+'/switchContext', {companyId: company.companyId})
+                if(switchContextRes?.code === 0) {
+                    context.currentCompany = company
+                    blogic.storeContext(context)
+                }else {
+                    switchContextRes?.showCodeDesc()
+                }
+            }
+            router.push('/')
+            return;
+        }else {
+            res?.showCodeDesc()
+        }
+        blogic.storeContext(new blogic.UserContext())
+    }else {
+        res?.showCodeDesc()
+    }
 }
 </script>
 <template>
@@ -57,10 +69,10 @@ function onSubmit() {
         <el-col :span="4" :offset="6">
             <el-form :model="loginData" label-position="top">
                 <el-form-item label="手机号">
-                    <el-input v-model="loginData.phone" :minLength="11" :maxLength="11"/>
+                    <el-input v-model="loginData.phone" :minLength="11" :maxLength="11" clearable/>
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input v-model="loginData.password" type="password"/>
+                    <el-input v-model="loginData.password" type="password" show-password clearable/>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">登录</el-button>

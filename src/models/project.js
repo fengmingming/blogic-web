@@ -21,8 +21,12 @@ class Product {
     }
     static async findByCompanyId(companyId) {
         let res = await axios.get('/Companies/' + companyId)
-        console.log(res)
-        return res
+        if(res?.code === 0) {
+            return res.data
+        }else {
+            res?.showCodeDesc()
+            throw res?res.codeDesc:blogic.InterruptOperation
+        }
     }
 }
 

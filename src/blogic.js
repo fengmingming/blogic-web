@@ -1,6 +1,6 @@
 import router from './router'
 import _axios from 'axios'
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElNotification} from 'element-plus'
 
 class UserContext {
     constructor() {
@@ -11,6 +11,7 @@ class UserContext {
             phone: null
         },
         this.companies = []
+        this.currentCompany = null
     }
 }
 
@@ -65,6 +66,13 @@ function showMessage(message) {
     ElMessage(message)
 }
 
+function showNotification(title, message) {
+    ElNotification({
+        title: title,
+        message: message,
+    })
+}
+
 const axiosInstance = _axios.create({
     baseURL: 'http://localhost:6060/blogic',
     timeout: 30000
@@ -109,6 +117,14 @@ axiosInstance.interceptors.response.use(function(res) {
     return Promise.reject(error)
 })
 
+function handleResponse(res) {
+    if(res?.code === 0) {
+        return res.data
+    }
+    res?.showCodeDesc()
+    throw res?res.codeDesc:InterruptOperation
+}
+
 export {
     loadContext,
     storeContext,
@@ -121,6 +137,9 @@ export {
     showSuccess,
     showMessage,
     UserContext,
+    showNotification,
+    handleResponse,
 }
 
 export const axios = axiosInstance
+export const InterruptOperation = 'Interrupt Operation'
