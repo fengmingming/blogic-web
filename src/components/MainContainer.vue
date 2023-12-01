@@ -116,10 +116,8 @@ if(!blogic.isLogin()) {
     width: 23px;
     height: 23px;
 }
-.b_aside .el-avatar {
-    background-color: #ecf5ff;
-}
 .b_aside .el-menu {
+    border: 0px;
     margin-top: 50px;
 }
 .b_aside .el-menu-item {
