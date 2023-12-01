@@ -1,7 +1,8 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, onBeforeMount, onUnmounted} from 'vue'
 import {useRouter} from 'vue-router'
 import * as blogic from '../blogic'
+import LogoPng from '../icons/favicon.png'
 
 const loginData = ref({
     phone: '13788888998',
@@ -64,12 +65,20 @@ async function onSubmit() {
         res?.showCodeDesc()
     }
 }
+onBeforeMount(() => {
+    document.querySelector('body').setAttribute('style', 'background-color: #ecf5ff')
+})
+onUnmounted(() => {
+    document.querySelector('body').setAttribute('style', 'background-color: white')
+})
 </script>
 <template>
     <el-row :gutter="20">
-        <el-col :span="8"></el-col>
-        <el-col :span="4" :offset="6">
-            <el-form :model="loginData" label-position="top">
+        <el-col :span="14" style="text-align: center;">
+            <el-image :src="LogoPng"/>
+        </el-col>
+        <el-col :span="10" style="text-align: center;">
+            <el-form :model="loginData" label-position="top" style="width:300px">
                 <el-form-item label="手机号">
                     <el-input v-model="loginData.phone" :minLength="11" :maxLength="11" clearable/>
                 </el-form-item>
