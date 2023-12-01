@@ -93,7 +93,7 @@ axiosInstance.interceptors.request.use(function(config) {
 })
 
 axiosInstance.interceptors.response.use(function(res) {
-    console.log(res)
+    console.log('axios response', res)
     if(res.status === 200) {
         res.data.showCodeDesc = function() {
             if(res.data.code > 0) {
@@ -111,7 +111,7 @@ axiosInstance.interceptors.response.use(function(res) {
         return null;
     }
 }, function (error) {
-    console.log(error)
+    console.log('axios', error)
     showError('请求异常')
     return Promise.reject(error)
 })
@@ -142,3 +142,22 @@ export {
 
 export const axios = axiosInstance
 export const InterruptOperation = 'Interrupt Operation'
+export const pageSizeOptions = [{
+    label: '10/页',
+    value: '10'
+},{
+    label: '20/页',
+    value: '20'
+},{
+    label: '50/页',
+    value: '50'
+},{
+    label: '100/页',
+    value: '100'
+},{
+    label: '200/页',
+    value: '200'
+},{
+    label: '500/页',
+    value: '500'
+}]

@@ -4,7 +4,6 @@ const axios = blogic.axios
 /* model */
 class Product {
     constructor(arg) {
-        console.log("product", arg)
         this.id = arg.id
         this.companyId = arg.companyId
         this.productName = arg.productName
@@ -20,7 +19,7 @@ class Product {
 
     static toProduct(datas) {
         let products = [];
-        for(var data in datas) {
+        for(let data of datas) {
             products.push(new Product(data))
         }
         return products

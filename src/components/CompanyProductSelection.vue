@@ -2,13 +2,17 @@
 import {ref, onMounted, defineProps} from 'vue'
 import { ArrowRight,ArrowDown } from '@element-plus/icons-vue'
 import * as blogic from '../blogic'
-import {Product} from '../models/product'
-import {User} from '../models/user'
+import {Product} from '../models/Product'
+import {User} from '../models/User'
+import {useRouter} from 'vue-router'
+
+
 const props = defineProps({showProduct:{type: Boolean, default: true}})
 const companies = ref([])
 const selectedCompany = ref({})
 const products = ref([])
 const selectedProduct = ref({})
+const router = useRouter()
 
 async function companyDropDownSelected(company) {
     selectedCompany.value = company
@@ -25,6 +29,7 @@ async function companyDropDownSelected(company) {
         context.currentProduct = {productId: productRes[0].id, productName: productRes[0].productName}
         blogic.storeContext(context)
     }
+    router.go(0)
 }
 
 function productDropDownSelected(product) {

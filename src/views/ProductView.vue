@@ -2,8 +2,10 @@
 import {ref, onMounted} from 'vue'
 import {Product} from '../models/product'
 import * as blogic from '../blogic'
+import {ArrowLeft, ArrowRight} from '@element-plus/icons-vue'
 
 const products = ref([])
+const pageSize = ref('20')
 onMounted(() => {
     loadProducts()
 })
@@ -24,10 +26,27 @@ async function loadProducts() {
             </CompanyProductSelection>
         </template>
         <template #default>
-            <div>
-                <el-button plain>我参与的</el-button>
-                <el-button plain>我创建的</el-button>
-            </div>
+            <el-row>
+                <el-col :span="12">
+                    <el-form :inline="true">
+                        <el-form-item>
+                            <el-checkbox-group>
+                                <el-checkbox-button :key="1">我参与的</el-checkbox-button>
+                                <el-checkbox-button :key="2">我创建的</el-checkbox-button>
+                            </el-checkbox-group>
+                        </el-form-item>
+                        <el-form-item label="产品名称">
+                            <el-input clearable />
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary">查询</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-col>
+                <el-col :span="12" style="text-align: right;">
+                    <el-button type="primary">新产品</el-button>
+                </el-col>
+            </el-row>
             <div>
 
             </div>
@@ -44,7 +63,14 @@ async function loadProducts() {
                         </template>
                     </el-table-column>
                 </el-table>
+                <div style="text-align: right;padding:10px 20px;">
+                    <el-button :icon="ArrowLeft">上一页</el-button>
+                    <el-select v-model="pageSize" style="width: 100px;">
+                        <el-option v-for="item in blogic.pageSizeOptions" :key="item.value" :value="item.value" :label="item.label" />
+                    </el-select>
+                    <el-button :icon="ArrowRight">下一页</el-button>
+                </div>
             </div>
         </template>
     </MainContainer>
-</template>
+</template>../models/Product
