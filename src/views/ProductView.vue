@@ -1,17 +1,18 @@
 <script setup>
 import {ref, onMounted} from 'vue'
-import {Product} from '../models/product'
+import {Product} from '../models/Product'
 import * as blogic from '../blogic'
 import {ArrowLeft, ArrowRight} from '@element-plus/icons-vue'
 
 const products = ref([])
+const pageNum = ref('1')
 const pageSize = ref('20')
 onMounted(() => {
     loadProducts()
 })
 async function loadProducts() {
     let context = blogic.loadContext()
-    let productRes = await Product.findByCompanyId(context.currentCompany.companyId, 1, 10)
+    let productRes = await Product.findByCompanyId(context.currentCompany.companyId, pageNum.value, pageSize.value)
     if(productRes?.code === 0){
         products.value = Product.toProduct(productRes.data)
     }else {
@@ -73,4 +74,4 @@ async function loadProducts() {
             </div>
         </template>
     </MainContainer>
-</template>../models/Product
+</template>
