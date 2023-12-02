@@ -13,8 +13,13 @@ class Product {
         this.createTime = arg.createTime
         this.updateTime = arg.updateTime
     }
-    static findByCompanyId(companyId, pageNum, pageSize) {
-        return axios.get('/Companies/' + companyId + '/Products?pageSize=1000&pageNum=1')
+    
+    static findByCompanyId(companyId) {
+        return axios.get('/Companies/' + companyId + '/Products?pageSize=100&pageNum=1')
+    }
+
+    static find(query) {
+        return axios.get('/Companies/' + query.companyId + '/Products?' + blogic.objToQuery(query))
     }
 
     static toProduct(datas) {

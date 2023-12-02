@@ -1,6 +1,7 @@
 import router from './router'
 import _axios from 'axios'
 import {ElMessage, ElNotification} from 'element-plus'
+import {v4 as uuid} from 'uuid'
 
 class UserContext {
     constructor() {
@@ -87,6 +88,7 @@ axiosInstance.interceptors.request.use(function(config) {
     }else {
         config.headers = {Authorization: 'Bearer ' + context.token}
     }
+    config.headers['Request-ID'] = uuid()
     return config
 }, function (error) {
     return Promise.reject(error)
@@ -124,6 +126,13 @@ function handleResponse(res) {
     throw res?res.codeDesc:InterruptOperation
 }
 
+function objToQuery(obj) {
+    if(!obj) return ''
+    return Object.keys(obj).map((key) => {
+        return key + '=' + obj[key]
+    }).join('&')
+}
+
 export {
     loadContext,
     storeContext,
@@ -138,6 +147,7 @@ export {
     UserContext,
     showNotification,
     handleResponse,
+    objToQuery,
 }
 
 export const axios = axiosInstance
