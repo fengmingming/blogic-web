@@ -3,7 +3,7 @@ import {ref} from 'vue'
 import * as blogic from '../blogic'
 import CompanyPng from '../icons/company.png'
 import { useRouter } from 'vue-router'
-import {User} from '../models/User'
+import {User} from '../models/user'
 
 const router = useRouter()
 const companies = ref(blogic.loadContext().companies)

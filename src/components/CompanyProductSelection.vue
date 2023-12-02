@@ -2,8 +2,8 @@
 import {ref, onMounted, defineProps} from 'vue'
 import { ArrowRight,ArrowDown } from '@element-plus/icons-vue'
 import * as blogic from '../blogic'
-import {Product} from '../models/Product'
-import {User} from '../models/User'
+import {Product} from '../models/product'
+import {User} from '../models/user'
 import {useRouter} from 'vue-router'
 
 
