@@ -37,9 +37,17 @@ function changePageNum(arg) {
     }
     loadProducts()
 }
-function queryBtnClick() {
+function queryClick() {
     pageNum.value = 1
     loadProducts()
+}
+//新建产品
+const addProductDialog = ref(false)
+function addProductClick() {
+    addProductDialog.value = true
+}
+function addProductSubmitClick(submit) {
+    addProductDialog.value = false
 }
 </script>
 <template>
@@ -53,7 +61,7 @@ function queryBtnClick() {
                 <el-col :span="12">
                     <el-form :inline="true" v-model="queryForm">
                         <el-form-item>
-                            <el-checkbox-group v-model="queryForm.types" @change="queryBtnClick">
+                            <el-checkbox-group v-model="queryForm.types" @change="queryClick">
                                 <el-checkbox-button :label="1">我参与的</el-checkbox-button>
                                 <el-checkbox-button :label="2">我创建的</el-checkbox-button>
                             </el-checkbox-group>
@@ -62,12 +70,12 @@ function queryBtnClick() {
                             <el-input clearable v-model="queryForm.productName" maxLength="254"/>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="queryBtnClick">查询</el-button>
+                            <el-button type="primary" @click="queryClick">查询</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
                 <el-col :span="12" style="text-align: right;">
-                    <el-button type="primary">新建产品</el-button>
+                    <el-button type="primary" @click="addProductClick">新建产品</el-button>
                 </el-col>
             </el-row>
             <div>
@@ -96,14 +104,20 @@ function queryBtnClick() {
             </div>
         </template>
     </MainContainer>
-    <el-dialog>
+    <el-dialog title="新建产品" v-model="addProductDialog">
         <el-form>
             <el-form-item label="产品名称">
                 <el-input />
             </el-form-item>
             <el-form-item label="产品描述">
-                <el-input />
             </el-form-item>
         </el-form>
+        
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="addProductSubmitClick(false)">关闭</el-button>
+                <el-button type="primary" @click="addProductSubmitClick(true)">保存</el-button>
+            </span>
+        </template>
     </el-dialog>
 </template>
