@@ -49,6 +49,11 @@ function addProductClick() {
 function addProductSubmitClick(submit) {
     addProductDialog.value = false
 }
+const richEditorContent = ref('init ')
+function richEditorBlur(content) {
+    console.log('rich editor', content)
+    
+}
 </script>
 <template>
     <MainContainer>
@@ -110,6 +115,7 @@ function addProductSubmitClick(submit) {
                 <el-input />
             </el-form-item>
             <el-form-item label="产品描述">
+                <RichEditor :content="richEditorContent" @blur="richEditorBlur"/>
             </el-form-item>
         </el-form>
         

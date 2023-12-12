@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, defineProps} from 'vue'
+import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import ModelPng from '../icons/model.png'
 import RequirementPng from '../icons/requirement.png'

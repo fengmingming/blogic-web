@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, defineProps} from 'vue'
+import {ref, onMounted} from 'vue'
 import { ArrowRight,ArrowDown } from '@element-plus/icons-vue'
 import * as blogic from '../blogic'
 import {Product} from '../models/product'
