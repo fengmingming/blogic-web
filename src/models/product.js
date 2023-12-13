@@ -29,6 +29,11 @@ class Product {
         }
         return products
     }
+
+    static createProduct(product) {
+        let context = blogic.loadContext()
+        return axios.post('/Companies/'+context.currentCompany.companyId+'/Products', {productName:product.productName, productDesc:product.productDesc})
+    }
     
 }
 

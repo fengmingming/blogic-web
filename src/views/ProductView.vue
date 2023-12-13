@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, inject} from 'vue'
 import {Product} from '../models/product'
 import * as blogic from '../blogic'
 import {ArrowLeft, ArrowRight} from '@element-plus/icons-vue'
@@ -11,6 +11,7 @@ const queryForm = ref({
     types: [1],
     productName:''
 })
+const reload = inject('reload')
 onMounted(() => {
     loadProducts()
 })
@@ -25,7 +26,7 @@ async function loadProducts() {
     }
     let productRes = await Product.find(queryParams)
     if(productRes?.code === 0){
-        products.value = Product.toProduct(productRes.data)
+        products.value = Product.toProduct(productRes.data.records)
     }else {
         productRes?.showCodeDesc()
     }
@@ -43,16 +44,29 @@ function queryClick() {
 }
 //新建产品
 const addProductDialog = ref(false)
+const newProductParam = ref({
+    productName:'',
+    productDesc:''
+})
 function addProductClick() {
     addProductDialog.value = true
 }
-function addProductSubmitClick(submit) {
+async function addProductSubmitClick(submit) {
     addProductDialog.value = false
+    if(submit) {
+        let product = {...newProductParam.value}
+        let res = await Product.createProduct(product)
+        if(res?.code == 0) {
+            blogic.showMessage('保存成功')
+            reload()
+        }else{
+            res?.showCodeDesc()
+        }
+    }
 }
-const richEditorContent = ref('init ')
+const richEditorContent = ref('')
 function richEditorBlur(content) {
-    console.log('rich editor', content)
-    
+    newProductParam.value.productDesc = content
 }
 </script>
 <template>
@@ -112,7 +126,7 @@ function richEditorBlur(content) {
     <el-dialog title="新建产品" v-model="addProductDialog">
         <el-form>
             <el-form-item label="产品名称">
-                <el-input />
+                <el-input v-model="newProductParam.productName"/>
             </el-form-item>
             <el-form-item label="产品描述">
                 <RichEditor :content="richEditorContent" @blur="richEditorBlur"/>

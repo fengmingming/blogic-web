@@ -34,6 +34,7 @@ async function onSubmit() {
             context.user.userId = userRes.data.userId
             context.user.userName = userRes.data.userName
             context.user.phone = userRes.data.phone
+            context.companies = []
             userRes.data.companies.forEach(company => {
                 context.companies.push({
                     companyId: company.companyId,
