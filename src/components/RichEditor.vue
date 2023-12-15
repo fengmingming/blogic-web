@@ -1,12 +1,12 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import '@ckeditor/ckeditor5-build-classic/build/translations/zh-cn.js'
 
 const props = defineProps({
     content: {
-        type:String,
-        default: ''
+        type: String,
+        requird: true
     },
     config: {
         type: Object,
@@ -15,15 +15,15 @@ const props = defineProps({
         }
     }
 })
-const emit = defineEmits(['blur'])
+const emit = defineEmits(['update:content'])
 const editor = ClassicEditor
 const editorContent = ref(props.content)
 function blurFun() {
-    emit('blur', editorContent.value)
+    emit('update:content', editorContent.value)
 }
+onMounted(() => {
+})
 </script>
 <template>
     <ckeditor :editor="editor" v-model="editorContent" :config="props.config" @blur="blurFun"></ckeditor>
 </template>
-<style scoped>
-</style>

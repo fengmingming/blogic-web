@@ -1,73 +1,94 @@
 <script setup>
 import {ref, onMounted, inject} from 'vue'
 import {Product} from '../models/product'
+import {User} from '../models/user'
 import * as blogic from '../blogic'
-import {ArrowLeft, ArrowRight} from '@element-plus/icons-vue'
 
 const products = ref([])
-const pageNum = ref(1)
-const pageSize = ref(20)
+const total = ref(0)
 const queryForm = ref({
     types: [1],
-    productName:''
+    productName:'',
+    pageSize:10,
+    pageNum:1
 })
 const reload = inject('reload')
-onMounted(() => {
-    loadProducts()
-})
 async function loadProducts() {
     if(queryForm.value.types.length > 1) {
         queryForm.value.types.shift()
     }
     let context = blogic.loadContext()
-    let {types, ...queryParams} = {companyId: context.currentCompany.companyId, pageNum: pageNum.value, pageSize: pageSize.value, ... queryForm.value}
+    let {types, ...queryParams} = {companyId: context.currentCompany.companyId, ... queryForm.value}
     if(types[0] == 2) {
         queryParams.createUserId = context.user.userId 
     }
     let productRes = await Product.find(queryParams)
     if(productRes?.code === 0){
         products.value = Product.toProduct(productRes.data.records)
+        total.value = productRes.data.total
     }else {
         productRes?.showCodeDesc()
     }
 }
-function changePageNum(arg) {
-    pageNum.value = pageNum.value + arg
-    if(pageNum.value <= 0) {
-        pageNum.value = 1
-    }
+function handleSizeChange(pageSize) {
+    queryForm.value.pageSize = pageSize
+    queryForm.value.pageNum = 1
     loadProducts()
 }
-function queryClick() {
-    pageNum.value = 1
+function handleCurrentChange(pageNum) {
+    queryForm.value.pageNum = pageNum
     loadProducts()
 }
 //新建产品
-const addProductDialog = ref(false)
-const newProductParam = ref({
+const productDialog = ref(false)
+const richEditorKey = ref(1)
+const emptyProduct = {
+    id: null,
     productName:'',
-    productDesc:''
-})
-function addProductClick() {
-    addProductDialog.value = true
+    productDesc:'',
+    userIds:[]
 }
-async function addProductSubmitClick(submit) {
-    addProductDialog.value = false
+const users = ref([])
+const productParam = ref(emptyProduct)
+function productDialogShow() {
+    productParam.value = emptyProduct
+    richEditorKey.value++
+    productDialog.value = true
+}
+async function productSubmitClick(submit) {
+    productDialog.value = false
     if(submit) {
-        let product = {...newProductParam.value}
-        let res = await Product.createProduct(product)
+        let product = {...productParam.value}
+        let res = null;
+        if(product.id) {
+            res = await Product.editProduct(product)
+        }else {
+            res = await Product.createProduct(product)
+        }
         if(res?.code == 0) {
             blogic.showMessage('保存成功')
             reload()
-        }else{
+        }else {
             res?.showCodeDesc()
         }
     }
 }
-const richEditorContent = ref('')
-function richEditorBlur(content) {
-    newProductParam.value.productDesc = content
+function handleEditClick(product) {
+    let {id, productName, productDesc} = {... product}
+    productParam.value = {id, productName, productDesc}
+    richEditorKey.value++
+    productDialog.value = true
 }
+onMounted(() => {
+    User.findAll().then(res => {
+        if(res?.code == 0) {
+            users.value = res.data
+            loadProducts()
+        }else {
+            res?.showCodeDesc()
+        }
+    })
+})
 </script>
 <template>
     <MainContainer>
@@ -80,7 +101,7 @@ function richEditorBlur(content) {
                 <el-col :span="12">
                     <el-form :inline="true" v-model="queryForm">
                         <el-form-item>
-                            <el-checkbox-group v-model="queryForm.types" @change="queryClick">
+                            <el-checkbox-group v-model="queryForm.types" @change="loadProducts">
                                 <el-checkbox-button :label="1">我参与的</el-checkbox-button>
                                 <el-checkbox-button :label="2">我创建的</el-checkbox-button>
                             </el-checkbox-group>
@@ -89,12 +110,12 @@ function richEditorBlur(content) {
                             <el-input clearable v-model="queryForm.productName" maxLength="254"/>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="queryClick">查询</el-button>
+                            <el-button type="primary" @click="loadProducts">查询</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
                 <el-col :span="12" style="text-align: right;">
-                    <el-button type="primary" @click="addProductClick">新建产品</el-button>
+                    <el-button type="primary" @click="productDialogShow">新建产品</el-button>
                 </el-col>
             </el-row>
             <div>
@@ -108,35 +129,44 @@ function richEditorBlur(content) {
                     <el-table-column prop="createTime" label="创建时间" />
                     <el-table-column prop="updateTime" label="修改时间" />
                     <el-table-column prop="id" label="操作">
-                        <template #default>
-                            <el-button type="primary" plain>编辑</el-button>
+                        <template #="rowData">
+                            <el-button type="primary" plain @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <div style="text-align: right;padding:10px 20px;">
-                    <el-button :icon="ArrowLeft" @click="changePageNum(-1)">上一页</el-button>
-                    <el-select v-model="pageSize" style="width: 100px;" @change="loadProducts">
-                        <el-option v-for="item in blogic.pageSizeOptions" :key="item.value" :value="item.value" :label="item.label" />
-                    </el-select>
-                    <el-button :icon="ArrowRight" @click="changePageNum(1)">下一页</el-button>
+                <div style="padding: 10px 10px;text-align: center;">
+                    <el-pagination
+                        v-model:current-page="queryForm.pageNum"
+                        v-model:page-size="queryForm.pageSize"
+                        :page-sizes="[10, 50, 100, 500]"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        />
                 </div>
             </div>
         </template>
     </MainContainer>
-    <el-dialog title="新建产品" v-model="addProductDialog">
+    <!-- 新增和编辑产品信息 -->
+    <el-dialog v-model="productDialog" :key="richEditorKey">
         <el-form>
             <el-form-item label="产品名称">
-                <el-input v-model="newProductParam.productName"/>
+                <el-input v-model="productParam.productName" />
+            </el-form-item>
+            <el-form-item label="参与人员">
+                <el-select v-model="productParam.userIds" multiple>
+                    <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
+                </el-select>
             </el-form-item>
             <el-form-item label="产品描述">
-                <RichEditor :content="richEditorContent" @blur="richEditorBlur"/>
+                <RichEditor v-model:content="productParam.productDesc"/>
             </el-form-item>
         </el-form>
-        
         <template #footer>
             <span class="dialog-footer">
-                <el-button @click="addProductSubmitClick(false)">关闭</el-button>
-                <el-button type="primary" @click="addProductSubmitClick(true)">保存</el-button>
+                <el-button @click="productSubmitClick(false)">关闭</el-button>
+                <el-button type="primary" @click="productSubmitClick(true)">保存</el-button>
             </span>
         </template>
     </el-dialog>

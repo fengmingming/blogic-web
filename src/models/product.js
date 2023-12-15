@@ -32,7 +32,18 @@ class Product {
 
     static createProduct(product) {
         let context = blogic.loadContext()
-        return axios.post('/Companies/'+context.currentCompany.companyId+'/Products', {productName:product.productName, productDesc:product.productDesc})
+        let {productName, productDesc, userIds} = {... product}
+        return axios.post('/Companies/'+context.currentCompany.companyId+'/Products', {productName, productDesc, userIds})
+    }
+
+    static editProduct(product) {
+        let context = blogic.loadContext()
+        let {productName, productDesc, userIds} = {... product}
+        return axios.put('/Companies/'+context.currentCompany.companyId+'/Products/' + product.id, {productName, productDesc, userIds})
+    }
+
+    static findById(productId) {
+        
     }
     
 }
