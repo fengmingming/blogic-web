@@ -13,6 +13,7 @@
     "@logicflow/core": "^1.2.18",
     "@logicflow/extension": "^1.2.19",
     "axios": "^1.6.2",
+    "ckeditor5-custom-build": "file:C:/Users/fengmingming/Downloads/ckeditor5",
     "element-plus": "^2.4.2",
     "uuid": "^9.0.1",
     "vue": "^3.3.4",

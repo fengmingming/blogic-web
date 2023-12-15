@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import '@ckeditor/ckeditor5-build-classic/build/translations/zh-cn.js'
+import ClassicEditor from 'ckeditor-custom-build'
+import '@ckeditor/ckeditor5-build-classic/build/translations/zh.js'
 
 const props = defineProps({
     content: {
