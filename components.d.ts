@@ -8,11 +8,13 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CompanyProductSelection: typeof import('./src/components/CompanyProductSelection.vue')['default']
+    DictSelect: typeof import('./src/components/DictSelect.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
     ElCheckboxButton: typeof import('element-plus/es')['ElCheckboxButton']
     ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
     ElCol: typeof import('element-plus/es')['ElCol']
@@ -34,6 +36,9 @@ declare module 'vue' {
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
+    ElSkeletonItem: typeof import('element-plus/es')['ElSkeletonItem']
+    ElSpace: typeof import('element-plus/es')['ElSpace']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     MainContainer: typeof import('./src/components/MainContainer.vue')['default']

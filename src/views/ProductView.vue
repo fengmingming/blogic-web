@@ -118,9 +118,6 @@ onMounted(() => {
                     <el-button type="primary" @click="productDialogShow">新建产品</el-button>
                 </el-col>
             </el-row>
-            <div>
-
-            </div>
             <div style="padding-top: 20px">
                 <el-table :data="products" border style="width: 100%">
                     <el-table-column prop="id" label="产品id"/>
@@ -128,7 +125,7 @@ onMounted(() => {
                     <el-table-column prop="createUserName" label="由谁创建" />
                     <el-table-column prop="createTime" label="创建时间" />
                     <el-table-column prop="updateTime" label="修改时间" />
-                    <el-table-column prop="id" label="操作">
+                    <el-table-column label="操作">
                         <template #="rowData">
                             <el-button type="primary" plain @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>

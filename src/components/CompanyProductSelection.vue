@@ -21,7 +21,7 @@ async function companyDropDownSelected(company) {
     context.currentProduct = null
     blogic.storeContext(context)
     selectedProduct.value = {}
-    let productRes = blogic.handleResponse(await Product.findByCompanyId(company.companyId, 1, 1000))
+    let productRes = blogic.handleResponse(await Product.findByCompanyId(company.companyId, 1, 1000)).records
     products.value = productRes
     if(productRes.length > 0) {
         selectedProduct.value = productRes[0]
@@ -46,7 +46,7 @@ onMounted(() => {
         selectedProduct.value = context.currentProduct
     }
     Product.findByCompanyId(context.currentCompany.companyId).then(res => {
-        let productRes = blogic.handleResponse(res)
+        let productRes = blogic.handleResponse(res).records
         products.value = productRes
         if(productRes.length > 0 && context.currentProduct === null) {
             selectedProduct.value = productRes[0]
