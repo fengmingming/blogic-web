@@ -133,6 +133,22 @@ function objToQuery(obj) {
     }).join('&')
 }
 
+function getCurCompanyId() {
+    let context = loadContext()
+    if(!context.currentCompany) {
+        throw '未选择公司'
+    }
+    return context.currentCompany.companyId
+}
+
+function getCurProductId() {
+    let context = loadContext()
+    if(!context.currentProduct) {
+        throw '未选择公司'
+    }
+    return context.currentProduct.id
+}
+
 export {
     loadContext,
     storeContext,
@@ -148,6 +164,8 @@ export {
     showNotification,
     handleResponse,
     objToQuery,
+    getCurCompanyId,
+    getCurProductId
 }
 
 export const axios = axiosInstance
