@@ -1,7 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import '@ckeditor/ckeditor5-build-classic/build/translations/zh-cn.js'
+import Editor from 'ckeditor5-custom'
+import 'ckeditor5-custom/build/translations/zh.js'
 
 const props = defineProps({
     content: {
@@ -11,13 +11,83 @@ const props = defineProps({
     config: {
         type: Object,
         default: {
-            language: 'zh-cn'
+            toolbar: {
+                items: [
+                    'undo',
+                    'redo',
+                    'heading',
+                    'bold',
+                    'italic',
+                    'link',
+                    'bulletedList',
+                    'numberedList',
+                    'outdent',
+                    'indent',
+                    'imageUpload',
+                    'blockQuote',
+                    'insertTable',
+                    'mediaEmbed',
+                    'alignment',
+                    'code',
+                    'codeBlock',
+                    '|',
+                    {
+                        "label":"others",
+                        "items":[
+                            'findAndReplace',
+                            'fontBackgroundColor',
+                            'fontSize',
+                            'fontFamily',
+                            'fontColor',
+                            'highlight',
+                            'horizontalLine',
+                            'htmlEmbed',
+                            'imageInsert',
+                            'pageBreak',
+                            'removeFormat',
+                            'selectAll',
+                            'sourceEditing',
+                            'showBlocks',
+                            'specialCharacters',
+                            'restrictedEditingException',
+                            'strikethrough',
+                            'style',
+                            'subscript',
+                            'superscript',
+                            'textPartLanguage',
+                            'todoList',
+                            'underline'
+                        ]
+                    }
+                ]
+            },
+            language: 'zh-cn',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'toggleImageCaption',
+                    'imageStyle:inline',
+                    'imageStyle:block',
+                    'imageStyle:side',
+                    'linkImage'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells',
+                    'tableCellProperties',
+                    'tableProperties'
+                ]
+            }
         }
     }
 })
 const emit = defineEmits(['update:content'])
-const editor = ClassicEditor
+const editor = Editor
 const editorContent = ref(props.content)
+const editorConfig = ref(props.config)
 function blurFun() {
     emit('update:content', editorContent.value)
 }
@@ -25,5 +95,5 @@ onMounted(() => {
 })
 </script>
 <template>
-    <ckeditor :editor="editor" v-model="editorContent" :config="props.config" @blur="blurFun"></ckeditor>
+    <ckeditor :editor="editor" v-model="editorContent" :config="editorConfig" @blur="blurFun"/>
 </template>

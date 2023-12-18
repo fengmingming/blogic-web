@@ -20,5 +20,13 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  optimizeDeps: {
+    include: ['ckeditor5-custom']
+  },
+  build: {
+      commonjsOptions: {
+          exclude: ['ckeditor5-custom']
+      }
+  },
 })

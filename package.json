@@ -8,11 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^40.2.0",
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@logicflow/core": "^1.2.18",
     "@logicflow/extension": "^1.2.19",
     "axios": "^1.6.2",
+    "ckeditor5-custom": "./public/ckeditor5",
     "element-plus": "^2.4.2",
     "uuid": "^9.0.1",
     "vue": "^3.3.4",
