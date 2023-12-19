@@ -43,7 +43,9 @@ class Product {
     }
 
     static findById(productId) {
-        
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.get(`/Companies/${companyId}/Products/${productId}`)
     }
     
 }

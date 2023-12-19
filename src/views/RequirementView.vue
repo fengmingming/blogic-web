@@ -1,5 +1,8 @@
 <script setup>
-import {ref, inject} from 'vue'
+import {ref, inject, onMounted} from 'vue'
+import {Requirement} from '../models/requirement'
+import * as blogic from '../blogic'
+import {Dict} from '../models/dict'
 
 const reload = inject('reload')
 const requirements = ref([])
@@ -8,10 +11,16 @@ const queryForm = ref({
     pageSize: 10,
     pageNum: 1,
     requirementName: '',
-    requirementStatus: ''
+    requirementStatus: null
 })
-function loadRequirement() {
-
+async function loadRequirement() {
+    let res = await Requirement.findList({...queryForm.value})
+    res = blogic.handleResponse(res)
+    res.records.forEach(a => {
+        a.requirementStatus = requirementStatusDict.value[a.requirementStatus]
+    })
+    requirements.value = res.records
+    total.value = res.total
 }
 
 function handleSizeChange(pageSize) {
@@ -24,11 +33,58 @@ function handleCurrentChange(pageNum) {
     queryForm.value.pageNum = pageNum
     loadRequirement()
 }
-
-function edit(requirement) {
-
+const requirementStatusDict = ref({})
+onMounted(() => {
+    Dict.findByDictType('requirement_status').then(res => {
+        if(res?.code == 0) {
+            requirementStatusDict.value = Dict.toMap(res.data)
+            loadRequirement()
+        }else {
+            res?.showCodeDesc()
+        }
+    })
+})
+//新增，编辑需求
+const emptyRequirement = {
+    id: null,
+    productId:'',
+    requirementName:'',
+    requirementSources:'',
+    requirementDesc:'',
+    requirementStatus:''
 }
-
+const requirementForm = ref(emptyRequirement)
+const editDialog = ref(false)
+const richEditorKey = ref(1)
+function showDialog() {
+    richEditorKey.value++
+    editDialog.value = true
+}
+function hideDialog() {
+    editDialog.value = false
+}
+function handleAddClick() {
+    requirementForm.value = emptyRequirement
+    showDialog()
+}
+async function handleEditClick(arg) {
+    let requirement = blogic.handleResponse(await Requirement.findOne(arg.id))
+    let {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirement}
+    requirementForm.value = {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus}
+    showDialog()
+}
+async function submitClick(submit) {
+    if(submit) {
+        let {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirementForm.value}
+        let res = await Requirement.save({id, productId, requirementName, requirementSources, requirementDesc, requirementStatus})
+        if(res?.code == 0) {
+            blogic.showMessage('操作成功')
+        }else {
+            res?.showCodeDesc()
+        }
+    }
+    hideDialog()
+}
 </script>
 <template>
     <MainContainer>
@@ -46,10 +102,13 @@ function edit(requirement) {
                             <el-form-item label="需求状态">
                                 <DictSelect v-model="queryForm.requirementStatus" dictType="requirement_status"/>
                             </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="loadRequirement">查询</el-button>
+                            </el-form-item>
                         </el-form>
                     </el-col>
                     <el-col :span="12" style="text-align: right;">
-                        <el-button type="primary" @click="loadRequirement">新建需求</el-button>
+                        <el-button type="primary" @click="handleAddClick">新建需求</el-button>
                     </el-col>
                 </el-row>
             </div>
@@ -63,7 +122,7 @@ function edit(requirement) {
                     <el-table-column prop="updateTime" label="修改时间" />
                     <el-table-column label="操作">
                         <template #="rowData">
-                            <el-button @click="edit(rowData.row)">编辑</el-button>
+                            <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -81,4 +140,26 @@ function edit(requirement) {
             </div>
         </template>
     </MainContainer>
+    <el-dialog v-model="editDialog" :key="richEditorKey">
+        <el-form v-model="requirementForm">
+            <el-form-item label="需求名称">
+                <el-input v-model="requirementForm.requirementName" />
+            </el-form-item>
+            <el-form-item label="需求来源">
+                <el-input v-model="requirementForm.requirementSources" />
+            </el-form-item>
+            <el-form-item label="需求状态">
+                <DictSelect v-model="requirementForm.requirementStatus" dictType="requirement_status"/>
+            </el-form-item>
+            <el-form-item label="需求描述">
+                <RichEditor v-model:content="requirementForm.requirementDesc"/>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="submitClick(false)">关闭</el-button>
+                <el-button type="primary" @click="submitClick(true)">保存</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>

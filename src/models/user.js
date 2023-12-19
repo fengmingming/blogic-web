@@ -8,9 +8,8 @@ class User {
     }
     static findAll() {
         let context = blogic.loadContext()
-        return new Promise(resolve => {
-            resolve({code:0, data:[]})
-        })
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.get(`/Users?companyId=${companyId}`)
     }
 }
 

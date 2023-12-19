@@ -1,5 +1,5 @@
 <script setup>
-import {ref, defineProps, defineEmits, onMounted} from 'vue'
+import {ref, onMounted} from 'vue'
 import {Dict} from '../models/dict'
 
 const props = defineProps({
@@ -7,19 +7,20 @@ const props = defineProps({
         type: String,
         required: true
     },
-    value: {
-        type: String,
-        default: ''
+    modelValue: {
+        type: Number,
+        default: null
     },
     multiple: {
         type: Boolean,
         default: false
     }
 })
-const emits = defineEmits(['update:value'])
+const emits = defineEmits(['update:modelValue'])
 const dictDatas = ref([])
+const value = ref(props.modelValue)
 onMounted(() => {
-    Dict.findByCode(props.dictType).then(res => {
+    Dict.findByDictType(props.dictType).then(res => {
         if(res?.code == 0) {
             dictDatas.value = Dict.toDict(res.data)
         }else {
@@ -27,9 +28,12 @@ onMounted(() => {
         }
     })
 })
+function handleChange(arg) {
+    emits('update:modelValue', arg)
+}
 </script>
 <template>
-    <el-select v-model="props.value" @change="emits('update:value')" :multiple="props.multiple">
+    <el-select v-model="value" @change="handleChange" :multiple="props.multiple" clearable>
         <el-option v-for="data in dictDatas" :value="data.code" :label="data.codeDesc" :key="data.id"/>
     </el-select>
 </template>

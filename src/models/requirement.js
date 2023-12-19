@@ -1,7 +1,5 @@
-import { inject } from "vue"
 import * as blogic from '../blogic'
 
-let reload = inject('reload')
 class Requirement {
 
     constructor(arg) {
@@ -33,10 +31,10 @@ class Requirement {
         return blogic.axios.get(`/Companies/${companyId}/Products/${productId}/Requirements?` + query)
     }
 
-    static finOne(requirementId) {
+    static findOne(requirementId) {
         let companyId = blogic.getCurCompanyId()
         let productId = blogic.getCurProductId()
-        return blogic.axios.get(`/Companies/{companyId}/Products/{productId}/Requirements/{requirementId}`)
+        return blogic.axios.get(`/Companies/${companyId}/Products/${productId}/Requirements/${requirementId}`)
     }
 
     static save(params) {
@@ -44,12 +42,16 @@ class Requirement {
         let productId = blogic.getCurProductId()
         if(params.id) {
             let requirementId = params.id
-            let url = `/Companies/{companyId}/Products/{productId}/Requirements/{requirementId}`
+            let url = `/Companies/${companyId}/Products/${productId}/Requirements/${requirementId}`
             return blogic.axios.put(url, params)
         }else {
-            let url = `/Companies/{companyId}/Products/{productId}/Requirements`
+            let url = `/Companies/${companyId}/Products/${productId}/Requirements`
             return blogic.axios.post(url, params)
         }
     }
 
+}
+
+export {
+    Requirement
 }

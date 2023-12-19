@@ -3,6 +3,11 @@
 </script>
 <template>
     <MainContainer>
-        <el-button>迭代</el-button>
+        <template #header>
+            <CompanyProductSelection />
+        </template>
+        <template #default>
+
+        </template>
     </MainContainer>
 </template>

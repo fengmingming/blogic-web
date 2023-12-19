@@ -15,12 +15,20 @@ class Dict {
         return objs
     }
 
-    static findByCode(dictType) {
+    static findByDictType(dictType) {
         return blogic.axios.get('/Dict?dictType=' + dictType)
+    }
+
+    static toMap(arr) {
+        let obj = {}
+        arr.forEach(a => {
+            obj[a.code] = a.codeDesc
+        })
+        return obj
     }
 
 }
 
-export default {
+export {
     Dict
 }

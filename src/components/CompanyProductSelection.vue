@@ -36,6 +36,7 @@ function productDropDownSelected(product) {
     selectedProduct.value = product
     context.currentProduct = {productId: product.id, productName: product.productName}
     blogic.storeContext(context)
+    reload()
 }
 
 onMounted(() => {

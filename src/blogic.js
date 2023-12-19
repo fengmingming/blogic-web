@@ -129,7 +129,11 @@ function handleResponse(res) {
 function objToQuery(obj) {
     if(!obj) return ''
     return Object.keys(obj).map((key) => {
-        return key + '=' + obj[key]
+        if(obj[key]) {
+            return key + '=' + obj[key]
+        }else {
+            return key + '='
+        }
     }).join('&')
 }
 
@@ -146,7 +150,7 @@ function getCurProductId() {
     if(!context.currentProduct) {
         throw '未选择公司'
     }
-    return context.currentProduct.id
+    return context.currentProduct.productId
 }
 
 export {
@@ -170,22 +174,3 @@ export {
 
 export const axios = axiosInstance
 export const InterruptOperation = 'Interrupt Operation'
-export const pageSizeOptions = [{
-    label: '10/页',
-    value: '10'
-},{
-    label: '20/页',
-    value: '20'
-},{
-    label: '50/页',
-    value: '50'
-},{
-    label: '100/页',
-    value: '100'
-},{
-    label: '200/页',
-    value: '200'
-},{
-    label: '500/页',
-    value: '500'
-}]

@@ -73,7 +73,8 @@ async function productSubmitClick(submit) {
         }
     }
 }
-function handleEditClick(product) {
+async function handleEditClick(arg) {
+    let product = blogic.handleResponse(await Product.findById(arg.id))
     let {id, productName, productDesc} = {... product}
     productParam.value = {id, productName, productDesc}
     richEditorKey.value++
