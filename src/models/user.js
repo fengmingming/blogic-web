@@ -11,6 +11,9 @@ class User {
         let companyId = context.currentCompany.companyId
         return blogic.axios.get(`/Users?companyId=${companyId}`)
     }
+    static mapTree(users) {
+        
+    }
 }
 
 export {
