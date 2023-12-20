@@ -37,7 +37,11 @@ onMounted(() => {
     }
     promise.then(res => {
         if(res?.code == 0) {
-            users.value = res.data
+            let objs = []
+            res.data.forEach(it => {
+                objs.push({id:it.id, userDesc: it.name})
+            })
+            users.value = objs
         }else {
             res?.showCodeDesc()
         }
