@@ -11,8 +11,15 @@ class User {
         let companyId = context.currentCompany.companyId
         return blogic.axios.get(`/Users?companyId=${companyId}`)
     }
-    static mapTree(users) {
-        
+    static findByProductId(productId) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.get(`/Users?companyId=${companyId}&productId=${productId}`)
+    } 
+    static findByIterationId(iterationId) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.get(`/Users?companyId=${companyId}&iterationId=${iterationId}`)
     }
 }
 

@@ -74,7 +74,7 @@ onMounted(() => {
             </el-dropdown>
         </el-breadcrumb-item>
         <el-breadcrumb-item v-if="products.length > 0 && props.showProduct">
-            <el-dropdown trigger="click" @command="productDropDownSelected">
+            <el-dropdown trigger="click" @command="productDropDownSelected" max-height="500px">
                 <span class="el-dropdown-link">
                     {{ selectedProduct.productName }}
                     <el-icon><ArrowDown /></el-icon>

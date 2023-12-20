@@ -11,28 +11,33 @@ const props = defineProps({
         type: Array,
         default: []
     },
-    checkBox: {
-        type: Boolean,
-        default: true
+    productId: {
+        type: Number,
+        default: null
+    },
+    iterationId: {
+        type: Number,
+        default: null
     }
 })
 const emits = defineEmits(['update:modelValue'])
-const datas = ref([])
+const users = ref([])
 const value = ref(props.modelValue)
-const tree = ref()
-function handleCheckChange() {
-    let arr = []
-    tree.value.getCheckedNodes().forEach(node => {
-        if(node.leaf) {
-            arr.push(node.id)
-        }
-    })
+function handleChange(arr) {
     emits('update:modelValue', arr)
 }
 onMounted(() => {
-    User.findAll().then(res => {
+    let promise
+    if(props.iterationId) {
+        promise = User.findByIterationId(props.iterationId)
+    }else if(props.productId) {
+        promise = User.findByProductId(props.productId)
+    }else {
+        promise = User.findAll()
+    }
+    promise.then(res => {
         if(res?.code == 0) {
-            datas.value = res.data
+            users.value = res.data
         }else {
             res?.showCodeDesc()
         }
@@ -40,6 +45,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <el-tree-select ref="tree" node-key="id" v-model="value" :data="datas" :multiple="props.multiple" 
-        :render-after-expand="true"  clearable :show-checkbox="props.checkBox" @check-change="handleCheckChange"/>
+    <el-select v-model="value" filterable>
+        <el-option v-for="user in users" :key="user.id" :label="user.userDesc" :value="user.id" @change="handleChange"/>
+  </el-select>
 </template>
