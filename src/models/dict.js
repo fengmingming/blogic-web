@@ -1,5 +1,8 @@
 import * as blogic from '../blogic'
 
+const dictCache = {
+
+}
 class Dict {
     constructor(dict) {
         this.id = dict.id
@@ -16,7 +19,12 @@ class Dict {
     }
 
     static findByDictType(dictType) {
-        return blogic.axios.get('/Dict?dictType=' + dictType)
+        let values = dictCache[dictType]
+        if(values === undefined) {
+            values = blogic.axios.get('/Dict?dictType=' + dictType)
+            dictCache[dictType] = values
+        }
+        return values
     }
 
     static toMap(arr) {

@@ -18,6 +18,10 @@ const props = defineProps({
     iterationId: {
         type: Number,
         default: null
+    },
+    clearable: {
+        type: Boolean,
+        default: true
     }
 })
 const emits = defineEmits(['update:modelValue'])
@@ -49,7 +53,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <el-select v-model="value" filterable>
+    <el-select v-model="value" filterable :multiple="props.multiple" :clearable="props.clearable">
         <el-option v-for="user in users" :key="user.id" :label="user.userDesc" :value="user.id" @change="handleChange"/>
-  </el-select>
+    </el-select>
 </template>

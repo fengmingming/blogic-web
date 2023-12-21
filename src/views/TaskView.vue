@@ -1,6 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
 import {Task} from '../models/task'
+import * as blogic from '../blogic'
 
 const tasks = ref([])
 const dialog = ref(false)
@@ -14,12 +15,38 @@ const queryForm = ref({
     status:null
 })
 const total = ref(0)
-
-function loadTasks() {
-
+function handleSizeChange(pageSize) {
+    queryForm.value.pageSize = pageSize
+    loadTasks()
 }
+function handleCurrentChange(pageNum) {
+    queryForm.value.pageNum = pageNum
+    loadTasks()
+}
+function loadTasks() {
+    Task.findList(queryForm.value).then(res => {
+        if(res?.code == 0) {
+            total.value = res.data.total
+            tasks.value = Task.toTask(res.data.records)
+        }else {
+            res?.showCodeDesc()
+        }
+    })
+}
+onMounted(() => {
+    loadTasks()
+})
 const emptyTask = {
-
+    id:null,
+    taskName: '',
+    iterationId: null,
+    requirementId: null,
+    status: null,
+    priority: null,
+    overallTime: 0,
+    consumeTime: 0,
+    currentUserId: null,
+    taskDesc: ''
 }
 const taskForm = ref(emptyTask)
 function handleAddClick() {
@@ -27,7 +54,15 @@ function handleAddClick() {
     showDialog()
 }
 function handleEditClick(task) {
-
+    Task.findOne(task.id).then(res => {
+        if(res?.code == 0) {
+            let {id, taskName, iterationId, requirementId, status, priority, overallTime, consumeTime, currentUserId, taskDesc} = {... res.data}
+            taskForm.value = {id, taskName, iterationId, requirementId, status, priority, overallTime, consumeTime, currentUserId, taskDesc}
+            showDialog()
+        }else {
+            res?.showCodeDesc()
+        }
+    })
 }
 function showDialog() {
     dialogKey.value++
@@ -35,6 +70,23 @@ function showDialog() {
 }
 function hideDialog() {
     dialog.value = false
+}
+const requirementKey = ref(0)
+function handleIterationChange(iterationId) {
+    requirementKey.value++ 
+}
+function taskSubmitClick(submit) {
+    if(submit) {
+        Task.save(taskForm.value).then(res => {
+            if(res?.code == 0) {
+                blogic.showMessage('操作成功')
+                loadTasks()
+            }else {
+                res?.showCodeDesc()
+            }
+        })
+    }
+    hideDialog()
 }
 </script>
 <template>
@@ -97,17 +149,17 @@ function hideDialog() {
             <el-form-item label="任务名称">
                 <el-input v-model="taskForm.taskName"/>
             </el-form-item>
-            <el-form-item label="所属迭代">
-
+            <el-form-item label="所属迭代" >
+                <IterationSelect v-model="taskForm.iterationId" @change="handleIterationChange"/>
             </el-form-item>
-            <el-form-item label="关联需求">
-
+            <el-form-item label="关联需求" >
+                <RequirementSelect v-model="taskForm.requirementId" :iterationId="taskForm.iterationId" :key="requirementKey"/>
             </el-form-item>
             <el-form-item label="任务状态">
                 <DictSelect v-model="taskForm.status" dictType="task_status"/>
             </el-form-item>
             <el-form-item label="优先级">
-                
+                <DictSelect v-model="taskForm.priority" dictType="task_priority"/>
             </el-form-item>
             <el-form-item label="进度">
                 <el-col :span="2" style="text-align:right;padding-right: 15px;">
@@ -126,10 +178,17 @@ function hideDialog() {
                 <el-col :span="10"/>
             </el-form-item>
             <el-form-item label="指派给">
+                <UserSelect :multiple="false" v-model="taskForm.currentUserId" :iterationId="taskForm.iterationId" :productId="taskForm.productId" />
             </el-form-item>
             <el-form-item label="任务描述">
                 <RichEditor v-model:content="taskForm.taskDesc" />
             </el-form-item>
         </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="taskSubmitClick(false)">关闭</el-button>
+                <el-button type="primary" @click="taskSubmitClick(true)">保存</el-button>
+            </span>
+        </template>
     </el-dialog>
 </template>
