@@ -36,9 +36,11 @@ const emptyIteration = {
     id:null,
     name:null,
     versionCode:null,
+    productId: blogic.getCurProductId(),
     status:null,
     scheduledStartTime:null,
     scheduledEndTime:null,
+    userIds:[]
 }
 const iterationForm = ref(emptyIteration)
 function showDialog() {
@@ -49,13 +51,14 @@ function hideDialog() {
     dialog.value = false
 }
 function handleAddClick() {
+    emptyIteration.productId = blogic.getCurProductId()
     iterationForm.value = emptyIteration
     showDialog()
 }
 async function iterationSubmitClick(submit) {
     if(submit) {
-        let {id, name, versionCode, status, scheduledStartTime, scheduledEndTime} = {... iterationForm.value}
-        let res = await Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime})
+        let {id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds} = {... iterationForm.value}
+        let res = await Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds})
         if(res?.code == 0) {
             blogic.showMessage('操作成功')
             loadIteration()
@@ -135,6 +138,9 @@ async function handleEditClick(iteration) {
                 <el-col :span="11">
                     <el-date-picker v-model="iterationForm.scheduledEndTime" type="date" size="default" value-format="YYYY-MM-DD" placeholder="迭代结束时间" style="width:100%"/>
                 </el-col>
+            </el-form-item>
+            <el-form-item label="迭代参与者">
+                <UserSelect v-model="iterationForm.userIds" :productId="iterationForm.productId"/>
             </el-form-item>
         </el-form>
         <template #footer>

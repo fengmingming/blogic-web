@@ -9,13 +9,16 @@ class Task {
         this.taskDesc = task.taskDesc
         this.status = task.status
         this.currentUserId = task.currentUserId
+        this.currentUserName = task.currentUserName
         this.completeUserId = task.completeUserId
+        this.completeUserName = task.completeUserName
         this.startTime = task.startTime
         this.priority = task.priority
         this.finalTime = task.finalTime
         this.completeTime = task.completeTime
         this.overallTime = task.overallTime
         this.consumeTime = task.consumeTime
+        this.createUserName = task.createUserName
     }
 
     static toTask(arr) {

@@ -26,7 +26,7 @@ const props = defineProps({
 })
 const emits = defineEmits(['update:modelValue'])
 const users = ref([])
-const value = ref(props.modelValue)
+const value = ref(props.multiple?props.modelValue:props.modelValue[0])
 function handleChange(arr) {
     emits('update:modelValue', arr)
 }
@@ -53,7 +53,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <el-select v-model="value" filterable :multiple="props.multiple" :clearable="props.clearable">
-        <el-option v-for="user in users" :key="user.id" :label="user.userDesc" :value="user.id" @change="handleChange"/>
+    <el-select v-model="value" filterable :multiple="props.multiple" :clearable="props.clearable" @change="handleChange">
+        <el-option v-for="user in users" :key="user.id" :label="user.userDesc" :value="user.id" />
     </el-select>
 </template>

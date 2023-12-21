@@ -1,12 +1,12 @@
 <script setup>
 import {ref, onMounted} from 'vue'
 import {Task} from '../models/task'
+import {Dict} from '../models/dict'
 import * as blogic from '../blogic'
 
 const tasks = ref([])
 const dialog = ref(false)
 const dialogKey = ref(0)
-
 const queryForm = ref({
     pageSize:10,
     pageNum:1,
@@ -15,6 +15,7 @@ const queryForm = ref({
     status:null
 })
 const total = ref(0)
+const taskStatusDict = ref([])
 function handleSizeChange(pageSize) {
     queryForm.value.pageSize = pageSize
     loadTasks()
@@ -27,14 +28,25 @@ function loadTasks() {
     Task.findList(queryForm.value).then(res => {
         if(res?.code == 0) {
             total.value = res.data.total
-            tasks.value = Task.toTask(res.data.records)
+            let objs = Task.toTask(res.data.records)
+            objs.forEach(obj => {
+                obj.status = taskStatusDict.value[obj.status]
+            })
+            tasks.value = objs
         }else {
             res?.showCodeDesc()
         }
     })
 }
 onMounted(() => {
-    loadTasks()
+    Dict.findByDictType('task_status').then(res => {
+        if(res?.code == 0) {
+            taskStatusDict.value = Dict.toMap(res.data)
+            loadTasks()
+        }else {
+            res?.showCodeDesc()
+        }
+    })
 })
 const emptyTask = {
     id:null,
@@ -87,6 +99,13 @@ function taskSubmitClick(submit) {
         })
     }
     hideDialog()
+}
+function handleUserSelect(userId) {
+    if(userId) {
+        taskForm.value.currentUserId = userId
+    }else {
+        taskForm.value.currentUserId = null
+    }
 }
 </script>
 <template>
@@ -178,7 +197,8 @@ function taskSubmitClick(submit) {
                 <el-col :span="10"/>
             </el-form-item>
             <el-form-item label="指派给">
-                <UserSelect :multiple="false" v-model="taskForm.currentUserId" :iterationId="taskForm.iterationId" :productId="taskForm.productId" />
+                <UserSelect :multiple="false" :modelValue="[taskForm.currentUserId]" @update:modelValue="handleUserSelect" 
+                    :iterationId="taskForm.iterationId" :productId="taskForm.productId" />
             </el-form-item>
             <el-form-item label="任务描述">
                 <RichEditor v-model:content="taskForm.taskDesc" />

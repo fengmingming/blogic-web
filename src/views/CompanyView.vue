@@ -4,6 +4,7 @@ import * as blogic from '../blogic'
 import CompanyPng from '../icons/company.png'
 import { useRouter } from 'vue-router'
 import {User} from '../models/user'
+import {Product} from '../models/product'
 
 const router = useRouter()
 const companies = ref(blogic.loadContext().companies)
@@ -14,7 +15,10 @@ async function clickMe(company) {
     blogic.handleResponse(await User.switchCompany(company.companyId))
     let context = blogic.loadContext()
     context.currentCompany = company
-    context.currentProduct = null
+    let products = blogic.handleResponse(await Product.findByCompanyId(company.companyId)).records
+    if(products.length > 0) {
+        context.currentProduct = {productId: products[0].id, productName: products[0].productName}
+    }
     blogic.storeContext(context)
     router.push('/home')
 }

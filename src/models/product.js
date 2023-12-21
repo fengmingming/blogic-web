@@ -15,7 +15,7 @@ class Product {
     }
     
     static findByCompanyId(companyId) {
-        return axios.get('/Companies/' + companyId + '/Products?pageSize=100&pageNum=1')
+        return axios.get('/Companies/' + companyId + '/Products')
     }
 
     static find(query) {
