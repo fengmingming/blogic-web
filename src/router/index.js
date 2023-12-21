@@ -49,9 +49,9 @@ const router = createRouter({
       component: () => import('../views/TaskView.vue')
     },
     {
-      path: '/bug',
-      name: 'bug',
-      component: () => import('../views/BugView.vue')
+      path: '/defect',
+      name: 'defect',
+      component: () => import('../views/DefectView.vue')
     },
     {
       path: '/statistics',

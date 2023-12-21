@@ -66,7 +66,7 @@ if(!blogic.isLogin()) {
                     <el-image :src="TaskPng"/>
                     <template #title>任务</template>
                 </el-menu-item>
-                <el-menu-item index="5" @click="routerPush('/bug')">
+                <el-menu-item index="5" @click="routerPush('/defect')">
                     <el-image :src="BugPng"/>
                     <template #title>缺陷</template>
                 </el-menu-item>

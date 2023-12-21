@@ -1,8 +1,8 @@
 <script setup>
+import {ref, onMounted} from 'vue'
+
 
 </script>
 <template>
-    <MainContainer>
-        <el-button>缺陷</el-button>
-    </MainContainer>
+    <span>Bug</span>
 </template>

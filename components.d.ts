@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    BugView: typeof import('./src/components/BugView.vue')['default']
     CompanyProductSelection: typeof import('./src/components/CompanyProductSelection.vue')['default']
     DictSelect: typeof import('./src/components/DictSelect.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
@@ -45,6 +46,8 @@ declare module 'vue' {
     ElSpace: typeof import('element-plus/es')['ElSpace']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     IterationSelect: typeof import('./src/components/IterationSelect.vue')['default']
     MainContainer: typeof import('./src/components/MainContainer.vue')['default']
