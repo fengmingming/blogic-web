@@ -8,8 +8,7 @@ const props = defineProps({
         default: true
     },
     modelValue: {
-        type: Array,
-        default: []
+        type: Object
     },
     productId: {
         type: Number,
@@ -26,9 +25,9 @@ const props = defineProps({
 })
 const emits = defineEmits(['update:modelValue'])
 const users = ref([])
-const value = ref(props.multiple?props.modelValue:props.modelValue[0])
-function handleChange(arr) {
-    emits('update:modelValue', arr)
+const value = ref(props.modelValue)
+function handleChange(value) {
+    emits('update:modelValue', value)
 }
 onMounted(() => {
     let promise

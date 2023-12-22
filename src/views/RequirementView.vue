@@ -156,10 +156,8 @@ async function submitClick(submit) {
             </el-form-item>
         </el-form>
         <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="submitClick(false)">关闭</el-button>
-                <el-button type="primary" @click="submitClick(true)">保存</el-button>
-            </span>
+            <el-button @click="submitClick(false)">关闭</el-button>
+            <el-button type="primary" @click="submitClick(true)">保存</el-button>
         </template>
     </el-dialog>
 </template>

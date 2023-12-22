@@ -62,3 +62,7 @@ class Bug {
     }
 
 }
+
+export {
+    Bug
+}

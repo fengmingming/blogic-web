@@ -144,10 +144,8 @@ async function handleEditClick(iteration) {
             </el-form-item>
         </el-form>
         <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="iterationSubmitClick(false)">关闭</el-button>
-                <el-button type="primary" @click="iterationSubmitClick(true)">保存</el-button>
-            </span>
+            <el-button @click="iterationSubmitClick(false)">关闭</el-button>
+            <el-button type="primary" @click="iterationSubmitClick(true)">保存</el-button>
         </template>
     </el-dialog>
 </template>

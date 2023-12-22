@@ -83,9 +83,9 @@ function showDialog() {
 function hideDialog() {
     dialog.value = false
 }
-const requirementKey = ref(0)
+const iterationKey = ref(0)
 function handleIterationChange(iterationId) {
-    requirementKey.value++ 
+    iterationKey.value++ 
 }
 function taskSubmitClick(submit) {
     if(submit) {
@@ -99,13 +99,6 @@ function taskSubmitClick(submit) {
         })
     }
     hideDialog()
-}
-function handleUserSelect(userId) {
-    if(userId) {
-        taskForm.value.currentUserId = userId
-    }else {
-        taskForm.value.currentUserId = null
-    }
 }
 </script>
 <template>
@@ -172,7 +165,7 @@ function handleUserSelect(userId) {
                 <IterationSelect v-model="taskForm.iterationId" @change="handleIterationChange"/>
             </el-form-item>
             <el-form-item label="关联需求" >
-                <RequirementSelect v-model="taskForm.requirementId" :iterationId="taskForm.iterationId" :key="requirementKey"/>
+                <RequirementSelect v-model="taskForm.requirementId" :iterationId="taskForm.iterationId" :key="iterationKey"/>
             </el-form-item>
             <el-form-item label="任务状态">
                 <DictSelect v-model="taskForm.status" dictType="task_status"/>
@@ -197,18 +190,15 @@ function handleUserSelect(userId) {
                 <el-col :span="10"/>
             </el-form-item>
             <el-form-item label="指派给">
-                <UserSelect :multiple="false" :modelValue="[taskForm.currentUserId]" @update:modelValue="handleUserSelect" 
-                    :iterationId="taskForm.iterationId" :productId="taskForm.productId" />
+                <UserSelect :multiple="false" v-model="taskForm.currentUserId" :iterationId="taskForm.iterationId" :productId="taskForm.productId" />
             </el-form-item>
             <el-form-item label="任务描述">
                 <RichEditor v-model:content="taskForm.taskDesc" />
             </el-form-item>
         </el-form>
         <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="taskSubmitClick(false)">关闭</el-button>
-                <el-button type="primary" @click="taskSubmitClick(true)">保存</el-button>
-            </span>
+            <el-button @click="taskSubmitClick(false)">关闭</el-button>
+            <el-button type="primary" @click="taskSubmitClick(true)">保存</el-button>
         </template>
     </el-dialog>
 </template>
