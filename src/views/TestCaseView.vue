@@ -127,8 +127,8 @@ function handleIterationChange() {
             <el-form-item label="前置条件">
                 <RichEditor v-model:content="testCaseForm.precondition" />
             </el-form-item>
-            <el-form-item label="步骤">
-                
+            <el-form-item label="用例步骤">
+                <Steps v-model="testCaseForm.steps" />
             </el-form-item>
             <el-form-item label="用例负责人">
                 <UserSelect v-model="testCaseForm.ownerUserId" :productId="testCaseForm.productId" :iterationId="testCaseForm.iterationId" :key="iterationKey" :multiple="false"/>
