@@ -136,6 +136,8 @@ function taskSubmitClick(submit) {
                     <el-table-column prop="completeUserName" label="由谁完成"/>
                     <el-table-column prop="status" label="状态"/>
                     <el-table-column prop="createUserName" label="创建人"/>
+                    <el-table-column prop="createTime" label="创建时间"/>
+                    <el-table-column prop="updateTime" label="修改时间"/>
                     <el-table-column label="操作">
                         <template #="rowData">
                             <el-button @click="handleEditClick(rowData.row)">编辑</el-button>

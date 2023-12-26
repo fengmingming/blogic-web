@@ -51,7 +51,7 @@ const emptyRequirement = {
     requirementName:'',
     requirementSources:'',
     requirementDesc:'',
-    requirementStatus:''
+    requirementStatus: null
 }
 const requirementForm = ref(emptyRequirement)
 const editDialog = ref(false)
@@ -79,6 +79,7 @@ async function submitClick(submit) {
         let res = await Requirement.save({id, productId, requirementName, requirementSources, requirementDesc, requirementStatus})
         if(res?.code == 0) {
             blogic.showMessage('操作成功')
+            loadRequirement()
         }else {
             res?.showCodeDesc()
         }

@@ -8,7 +8,7 @@ const props = defineProps({
         default: true
     },
     modelValue: {
-        type: Object
+        
     },
     productId: {
         type: Number,

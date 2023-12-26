@@ -4,7 +4,9 @@ class Task {
     constructor(task) {
         this.id = task.id
         this.requirementId = task.requirementId
+        this.requirementName = task.requirementName
         this.iterationId = task.iterationId
+        this.iterationName = task.iterationName
         this.taskName = task.taskName
         this.taskDesc = task.taskDesc
         this.status = task.status
@@ -18,7 +20,10 @@ class Task {
         this.completeTime = task.completeTime
         this.overallTime = task.overallTime
         this.consumeTime = task.consumeTime
+        this.createUserId = task.createUserId
         this.createUserName = task.createUserName
+        this.createTime = task.createTime
+        this.updateTime = task.updateTime
     }
 
     static toTask(arr) {

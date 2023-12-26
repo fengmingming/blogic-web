@@ -5,13 +5,13 @@
                 {{ step.number }}
             </el-col>
             <el-col :span="10">
-                <el-input type="textarea" v-model="step.step"/>
+                <el-input type="textarea" v-model="step.step" @blur="handleBlurFun"/>
             </el-col>
             <el-col :span="2">
                 期望结果
             </el-col>
             <el-col :span="9">
-                <el-input type="textarea" v-model="step.expectedResult"/> 
+                <el-input type="textarea" v-model="step.expectedResult" @blur="handleBlurFun"/> 
             </el-col>
             <el-col :span="1">
                 <el-dropdown>
@@ -34,24 +34,23 @@ import {Step} from '../models/step'
 
 const props = defineProps({
     modelValue: {
-        type: Object,
-        default: null
+        type: Array,
+        default: [new Step({number: '1', step: '', expectedResult: ''})]
     }
 })
 const emits = defineEmits(['update:modelValue'])
-const steps = ref(props.modelValue?props.modelValue:[new Step({number: '1', step: '', expectedResult: ''})])
-
+const steps = ref(props.modelValue == null || props.modelValue.length == 0? [new Step({number: '1', step: '', expectedResult: ''})]: props.modelValue)
 function indexOf(step) {
     return steps.value.indexOf(step)
 }
 
 function setNumber(arr) {
     let objs = []
-    for(let i = 0,j = arr.length;i < j;i++) {
+    for(let i = 0,k = 0,j = arr.length;i < j;i++) {
         if(arr[i] === null) {
             continue
         }else {
-            arr[i].number = i + 1
+            arr[i].number = (k++) + 1
             objs.push(arr[i])
         }
     }
@@ -70,5 +69,9 @@ function delStep(step) {
         steps.value[index] = null
         steps.value = setNumber(steps.value)
     }
+}
+
+function handleBlurFun() {
+    emits('update:modelValue', steps.value)
 }
 </script>
