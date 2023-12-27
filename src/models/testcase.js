@@ -27,7 +27,7 @@ class TestCase {
     static toTestCase(arr) {
         let objs = []
         arr.forEach(obj => {
-            obj.push(new TestCase(obj))
+            objs.push(new TestCase(obj))
         })
         return objs
     }

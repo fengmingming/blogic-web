@@ -23,11 +23,12 @@ const props = defineProps({
         default: true
     }
 })
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue', 'change'])
 const users = ref([])
 const value = ref(props.modelValue)
 function handleChange(value) {
     emits('update:modelValue', value)
+    emits('change', value)
 }
 onMounted(() => {
     let promise
