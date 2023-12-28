@@ -12,7 +12,7 @@ const queryForm = ref({
 })
 const testCases = ref([])
 const total = ref(0)
-const statusDict = ref()
+const statusDict = ref({})
 async function loadTestCase() {
     let res = await TestCase.findList(queryForm.value)
     if(res?.code == 0) {
@@ -73,7 +73,7 @@ const emptyTestCase = {
 }
 const testCaseForm = ref(emptyTestCase)
 function handleAddClick() {
-    testCaseForm.value = emptyTestCase
+    testCaseForm.value = {... emptyTestCase}
     showDialog()
 }
 function handleEditClick(testCase) {
@@ -93,13 +93,13 @@ function testCaseSubmitClick(submit) {
         TestCase.save(req).then(res => {
             if(res?.code == 0) {
                 blogic.showMessage('操作成功')
+                hideDialog()
                 loadTestCase()
             }else {
                 res?.showCodeDesc()
             }
         })
     }
-    hideDialog()
 }
 const iterationKey = ref(0)
 function handleIterationChange() {

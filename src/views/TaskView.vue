@@ -62,7 +62,7 @@ const emptyTask = {
 }
 const taskForm = ref(emptyTask)
 function handleAddClick() {
-    taskForm.value = emptyTask
+    taskForm.value = {... emptyTask}
     showDialog()
 }
 function handleEditClick(task) {
@@ -92,13 +92,13 @@ function taskSubmitClick(submit) {
         Task.save(taskForm.value).then(res => {
             if(res?.code == 0) {
                 blogic.showMessage('操作成功')
+                hideDialog()
                 loadTasks()
             }else {
                 res?.showCodeDesc()
             }
         })
     }
-    hideDialog()
 }
 </script>
 <template>

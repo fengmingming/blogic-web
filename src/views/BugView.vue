@@ -1,6 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
 import {Bug} from '../models/bug'
+import * as blogic from '../blogic'
 
 const bugs = ref([])
 const total = ref(0)
@@ -44,14 +45,12 @@ const emptyBugForm = {
     bugType:null,
     env:null,
     device:null,
-    reproSteps:null,
+    reproSteps:'',
     status:null,
     severity:null,
     priority:null,
     fixUserId:null,
-    currentUserId:null,
-    fixSolution:null,
-    fixVersion:null
+    currentUserId:null
 }
 
 const bugForm = ref(emptyBugForm)
@@ -77,19 +76,34 @@ function hideDialog() {
 }
 
 function handleAddClick() {
-
+    bugForm.value = {... emptyBugForm}
+    showDialog()
 }
 
-function handleEditClick(bug) {
-
-}
-
-function bugSubmitClick(submit) {
-    if(submit) {
-
+async function handleEditClick(bug) {
+    console.log(bug)
+    let res = await Bug.findOne(bug.id)
+    if(res?.code == 0) {
+        bugForm.value = Bug.toBug([res.data])[0]
+        showDialog()
+    }else {
+        res?.showCodeDesc()
     }
-    hideDialog()
 }
+
+async function bugSubmitClick(submit) {
+    if(submit) {
+        let res = await Bug.save(bugForm.value)
+        if(res?.code == 0) {
+            blogic.showMessage('操作成功')
+            hideDialog()
+            loadBug()
+        }else {
+            res?.showCodeDesc()
+        }
+    }
+}
+
 </script>
 <template>
     <div style="padding-top: 20px">
@@ -97,7 +111,7 @@ function bugSubmitClick(submit) {
             <el-col :span="20">
                 <el-form :inline="true" v-model="queryForm">
                     <el-form-item label="ID">
-                        <IterationSelect v-model="queryForm.id"/>
+                        <el-input v-model="queryForm.id"/>
                     </el-form-item>
                     <el-form-item label="标题">
                         <el-input v-model="queryForm.title"/>
@@ -142,7 +156,7 @@ function bugSubmitClick(submit) {
             @current-change="handleCurrentChange" />
     </div>
     <el-dialog v-model="dialog" :key="dialogKey" width="55%">
-        <el-form v-model="bugForm">
+        <el-form v-model="bugForm" label-width="100px">
             <el-form-item label="关联迭代">
                 <IterationSelect v-model="bugForm.iterationId" @change="handleIterationChange"/>
             </el-form-item>
@@ -159,10 +173,10 @@ function bugSubmitClick(submit) {
                 <el-input v-model="bugForm.title"/>
             </el-form-item>
             <el-form-item label="bug类型">
-                <DictSelect v-model="bugForm.bugType" :dictType="bug_type"/>
+                <DictSelect v-model="bugForm.bugType" dictType="bug_type"/>
             </el-form-item>
             <el-form-item label="环境">
-                <DictSelect v-model="bugForm.bugEnv" :dictType="bug_env"/>
+                <DictSelect v-model="bugForm.env" dictType="bug_env"/>
             </el-form-item>
             <el-form-item label="设备">
                 <el-input v-model="bugForm.device" />
@@ -171,22 +185,16 @@ function bugSubmitClick(submit) {
                 <RichEditor v-model="bugForm.reproSteps" />
             </el-form-item>
             <el-form-item label="状态">
-                <DictSelect v-model="bugForm.status" :dictType="bug_status"/>
+                <DictSelect v-model="bugForm.status" dictType="bug_status"/>
             </el-form-item>
             <el-form-item label="严重程度">
-                <DictSelect v-model="bugForm.severity" :dictType="bug_severity"/>
+                <DictSelect v-model="bugForm.severity" dictType="bug_severity"/>
             </el-form-item>
             <el-form-item label="优先级">
-                <DictSelect v-model="bugForm.priority" :dictType="bug_priority"/>
+                <DictSelect v-model="bugForm.priority" dictType="bug_priority"/>
             </el-form-item>
             <el-form-item label="指派给">
                 <UserSelect :multiple="false" v-model="bugForm.currentUserId"/>
-            </el-form-item>
-            <el-form-item label="解决方案">
-                <DictSelect v-model="bugForm.fixSolution" :dictType="bug_fix_solution"/>
-            </el-form-item>
-            <el-form-item label="版本号">
-                <el-input v-model="bugForm.fixVersion" />
             </el-form-item>
         </el-form>
         <template #footer>

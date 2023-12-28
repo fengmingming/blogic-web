@@ -59,11 +59,11 @@ class Bug {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId
         let productId = context.currentProduct.productId
+        let {id, ... body} = {... bug}
         if(bug.id) {
-            let {id, ... body} = {... bug}
             return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs/${id}`, body)
         }else {
-            return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs`, bug)
+            return blogic.axios.post(`/Companies/${companyId}/Products/${productId}/Bugs`, body)
         }
     }
 
