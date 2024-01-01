@@ -3,7 +3,9 @@ import {ref, onMounted, inject} from 'vue'
 import {Product} from '../models/product'
 import {User} from '../models/user'
 import * as blogic from '../blogic'
+import {useRouter} from 'vue-router'
 
+const router = useRouter()
 const products = ref([])
 const total = ref(0)
 const queryForm = ref({
@@ -80,6 +82,11 @@ async function handleEditClick(arg) {
     richEditorKey.value++
     productDialog.value = true
 }
+
+function handleViewClick(product) {
+    router.push(`/product/${product.id}`)
+}
+
 onMounted(() => {
     User.findAll().then(res => {
         if(res?.code == 0) {
@@ -128,6 +135,7 @@ onMounted(() => {
                     <el-table-column prop="updateTime" label="修改时间" />
                     <el-table-column label="操作">
                         <template #="rowData">
+                            <el-button type="primary" plain @click="handleViewClick(rowData.row)">查看</el-button>
                             <el-button type="primary" plain @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>
                     </el-table-column>
