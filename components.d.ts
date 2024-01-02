@@ -50,6 +50,7 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    ElText: typeof import('element-plus/es')['ElText']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     IterationSelect: typeof import('./src/components/IterationSelect.vue')['default']
     MainContainer: typeof import('./src/components/MainContainer.vue')['default']
@@ -58,6 +59,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Steps: typeof import('./src/components/Steps.vue')['default']
+    TestCaseSelect: typeof import('./src/components/TestCaseSelect.vue')['default']
     UserSelect: typeof import('./src/components/UserSelect.vue')['default']
   }
 }

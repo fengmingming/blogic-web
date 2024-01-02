@@ -27,7 +27,7 @@ class TestCase {
     static toTestCase(arr) {
         let objs = []
         arr.forEach(obj => {
-            obj.push(new TestCase(obj))
+            objs.push(new TestCase(obj))
         })
         return objs
     }
@@ -51,11 +51,11 @@ class TestCase {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId
         let productId = context.currentProduct.productId
+        let {id, ... body} = {... testCase}
         if(testCase.id) {
-            let {id, ... body} = {... testCase}
             return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/TestCases/${id}`, body)
         }else {
-            return blogic.axios.post(`/Companies/${companyId}/Products/${productId}/TestCases`, testCase)
+            return blogic.axios.post(`/Companies/${companyId}/Products/${productId}/TestCases`, body)
         }
     }
 

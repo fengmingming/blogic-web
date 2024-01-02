@@ -9,6 +9,5 @@ const context = blogic.loadContext()
     <el-button>
       Home
     </el-button>
-    <UserSelect :productId="1"/>
   </MainContainer>
 </template>

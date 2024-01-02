@@ -51,8 +51,7 @@ function hideDialog() {
     dialog.value = false
 }
 function handleAddClick() {
-    emptyIteration.productId = blogic.getCurProductId()
-    iterationForm.value = emptyIteration
+    iterationForm.value = {... emptyIteration}
     showDialog()
 }
 async function iterationSubmitClick(submit) {
@@ -61,12 +60,12 @@ async function iterationSubmitClick(submit) {
         let res = await Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds})
         if(res?.code == 0) {
             blogic.showMessage('操作成功')
+            hideDialog()
             loadIteration()
         }else {
             res?.showCodeDesc()
         }
     }
-    hideDialog()
 }
 async function handleEditClick(iteration) {
     let res = await Iteration.findOne(iteration.id)

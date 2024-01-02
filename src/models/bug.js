@@ -5,8 +5,11 @@ class Bug {
     constructor(props) {
         this.id = props.id 
         this.testCaseId = props.testCaseId
+        this.teatCaseTitle = props.testCaseTitle
         this.requirementId = props.requirementId
+        this.requirementName = props.requirementName
         this.iterationId = props.iterationId
+        this.iterationName = props.iterationName
         this.productId = props.productId
         this.iterationVersion = props.iterationVersion
         this.title = props.title
@@ -18,10 +21,13 @@ class Bug {
         this.severity = props.severity
         this.priority = props.priority
         this.currentUserId = props.currentUserId
+        this.currentUserName = props.currentUserName
         this.fixUserId = props.fixUserId
+        this.fixUserName = props.fixUserName
         this.fixSolution = props.fixSolution
         this.fixVersion = props.fixVersion
         this.createUserId = props.createUserId
+        this.createUserName = props.createUserName
         this.createTime = props.createTime
         this.updateTime = props.updateTime
     }
@@ -53,11 +59,11 @@ class Bug {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId
         let productId = context.currentProduct.productId
+        let {id, ... body} = {... bug}
         if(bug.id) {
-            let {id, ... body} = {... bug}
             return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs/${id}`, body)
         }else {
-            return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs`, bug)
+            return blogic.axios.post(`/Companies/${companyId}/Products/${productId}/Bugs`, body)
         }
     }
 

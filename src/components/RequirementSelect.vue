@@ -19,12 +19,13 @@ const props = defineProps({
         default: true
     }
 })
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue', 'change'])
 const value = ref(props.modelValue)
 const requirements = ref([])
 const loading = ref(false)
 function handleChange(value) {
     emits('update:modelValue', value)
+    emits('change', value)
 }
 function loadRequirement(key) {
     loading.value = true
