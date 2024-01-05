@@ -3,7 +3,9 @@ import {ref, inject, onMounted} from 'vue'
 import {Requirement} from '../models/requirement'
 import * as blogic from '../blogic'
 import {Dict} from '../models/dict'
+import {useRouter} from 'vue-router'
 
+const router = useRouter()
 const reload = inject('reload')
 const requirements = ref([])
 const total = ref(0)
@@ -67,6 +69,9 @@ function handleAddClick() {
     requirementForm.value = {... emptyRequirement}
     showDialog()
 }
+function handleViewClick(arg) {
+    router.push(`/requirement/${arg.id}`)
+}
 async function handleEditClick(arg) {
     let requirement = blogic.handleResponse(await Requirement.findOne(arg.id))
     let {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirement}
@@ -123,6 +128,7 @@ async function submitClick(submit) {
                     <el-table-column prop="updateTime" label="修改时间" />
                     <el-table-column label="操作">
                         <template #="rowData">
+                            <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                             <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>
                     </el-table-column>

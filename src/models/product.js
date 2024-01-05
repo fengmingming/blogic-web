@@ -12,6 +12,7 @@ class Product {
         this.createUserName = arg.createUserName
         this.createTime = arg.createTime
         this.updateTime = arg.updateTime
+        this.users = arg.users
     }
     
     static findByCompanyId(companyId) {

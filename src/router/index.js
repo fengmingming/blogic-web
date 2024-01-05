@@ -31,7 +31,7 @@ const router = createRouter({
     {
       path: '/product/:id',
       name: 'productDetail',
-      component: () => import('@/views/ProductDetailView.vue')
+      component: () => import('../views/ProductDetailView.vue')
     },
     {
       path: '/model',
@@ -44,9 +44,19 @@ const router = createRouter({
       component: () => import('../views/RequirementView.vue')
     },
     {
+      path: '/requirement/:id',
+      name: 'requirementDetail',
+      component: () => import('../views/RequirementDetailView.vue')
+    },
+    {
       path: '/iteration',
       name: 'iteration',
       component: () => import('../views/IterationView.vue')
+    },
+    {
+      path: '/iteration/:id',
+      name: 'iterationDetail',
+      component: () => import('../views/IterationDetailView.vue')
     },
     {
       path: '/task',
