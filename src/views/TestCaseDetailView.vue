@@ -1,7 +1,7 @@
 <template>
     <MainContainer>
         <template #default>
-            <el-form v-model="testCase" :key="flushKey">
+            <el-form v-model="testCase" :key="flushKey" label-width="100px">
                 <el-form-item label="所属迭代:">
                     {{ testCase.iterationName }}
                 </el-form-item>

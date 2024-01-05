@@ -1,7 +1,7 @@
 <template>
     <MainContainer>
         <template #default>
-            <el-form v-model="bug">
+            <el-form v-model="bug" label-width="100px" :key="flushKey">
                 <el-form-item label="关联迭代:">
                     {{ bug.iterationName }}
                 </el-form-item>
@@ -27,7 +27,7 @@
                     {{ bug.device }}
                 </el-form-item>
                 <el-form-item label="重现步骤:">
-                    <RichEditor v-model="bug.reproSteps"/>
+                    <RichEditor v-model="bug.reproSteps" />
                 </el-form-item>
                 <el-form-item label="状态:">
                     <DictSelect v-model="bug.status" dictType="bug_status" :readOnly="true"/>
@@ -49,18 +49,19 @@
 import {ref, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import {Bug} from '../models/bug'
-import {Dict} from '../models/dict'
-import * as blogic from '../blogic'
 
 const params = useRouter().currentRoute.value.params
 const bug = ref({})
+const flushKey = ref(0)
+function flush() {
+    flushKey.value++
+}
 async function init() {
-    let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('bug_status')))
     let res = await Bug.findOne(params.id)
     if(res?.code == 0) {
         let data = Bug.toBug([res.data])[0]
-        data.statusName = statusDict[data.status]
         bug.value = data
+        flush()
     }else {
         res?.showCodeDesc()
     }
