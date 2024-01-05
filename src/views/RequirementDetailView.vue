@@ -15,7 +15,7 @@
                     {{ requirement.createUserName }} {{ requirement.createTime }}
                 </el-form-item>
                 <el-form-item label="需求描述:">
-                    <RichEditor v-model:content="requirement.requirementDesc" :disable="true" v-if="requirement.requirementDesc"/>
+                    <RichEditor v-model:content="requirement.requirementDesc" :disabled="true" v-if="requirement.requirementDesc"/>
                 </el-form-item>
             </el-form>
         </template>

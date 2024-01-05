@@ -14,15 +14,39 @@ const props = defineProps({
     multiple: {
         type: Boolean,
         default: false
+    },
+    disabled: {
+        type: Boolean,
+        default: false
+    },
+    readOnly: {
+        type: Boolean,
+        default: false
     }
 })
 const emits = defineEmits(['update:modelValue'])
 const dictDatas = ref([])
 const value = ref(props.modelValue)
+const disabled = ref(props.disabled)
+const readOnly = ref(props.readOnly)
 onMounted(() => {
     Dict.findByDictType(props.dictType).then(res => {
         if(res?.code == 0) {
-            dictDatas.value = Dict.toDict(res.data)
+            let datas = Dict.toDict(res.data)
+            if(readOnly.value) {
+                let dictMap = Dict.toMap(datas)
+                if(Array.isArray(value.value)) {
+                    let values = []
+                    value.value.forEach(it => {
+                        values.push(dictMap[it])
+                    })
+                    value.value = values
+                }else {
+                    value.value = dictMap[value.value]
+                }
+            }else {
+                dictDatas.value = datas
+            }
         }else {
             res?.showCodeDesc()
         }
@@ -33,7 +57,13 @@ function handleChange(arg) {
 }
 </script>
 <template>
-    <el-select v-model="value" @change="handleChange" :multiple="props.multiple" clearable>
-        <el-option v-for="data in dictDatas" :value="data.code" :label="data.codeDesc" :key="data.id"/>
-    </el-select>
+    <div v-if="readOnly === false">
+        <el-select v-model="value" @change="handleChange" :multiple="props.multiple" clearable :disabled="disabled">
+            <el-option v-for="data in dictDatas" :value="data.code" :label="data.codeDesc" :key="data.id"/>
+        </el-select>
+    </div>
+    <div v-if="readOnly === true">
+        <span v-if="Array.isArray(value)" v-for="v in value">{{ v }}</span>
+        <span v-if="!Array.isArray(value)">{{ value }}</span>
+    </div>
 </template>

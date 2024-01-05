@@ -3,7 +3,9 @@ import {ref, onMounted} from 'vue'
 import {Iteration} from '../models/iteration'
 import {Dict} from '../models/dict'
 import * as blogic from '../blogic'
+import {useRouter} from 'vue-router'
 
+const router = useRouter()
 const queryForm = ref({
     name: '',
     status: null,
@@ -60,12 +62,15 @@ async function iterationSubmitClick(submit) {
         let res = await Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds})
         if(res?.code == 0) {
             blogic.showMessage('操作成功')
-            hideDialog()
             loadIteration()
         }else {
             res?.showCodeDesc()
         }
     }
+    hideDialog()
+}
+function handleViewClick(iteration) {
+    router.push(`/iteration/${iteration.id}`)
 }
 async function handleEditClick(iteration) {
     let res = await Iteration.findOne(iteration.id)
@@ -109,6 +114,7 @@ async function handleEditClick(iteration) {
                     <el-table-column prop="updateTime" label="最后修改时间"/>
                     <el-table-column label="操作">
                         <template #="rowData">
+                            <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                             <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>
                     </el-table-column>

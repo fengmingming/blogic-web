@@ -9,7 +9,7 @@
                     <el-text v-for="user in product.users">{{ user.name }}</el-text>
                 </el-form-item>
                 <el-form-item label="产品描述">
-                    <RichEditor v-model:content="product.productDesc" :disable="true" v-if="product.productDesc"/>
+                    <RichEditor v-model:content="product.productDesc" :disabled="true" v-if="product.productDesc"/>
                 </el-form-item>
             </el-form>
         </template>

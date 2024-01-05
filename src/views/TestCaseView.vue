@@ -3,7 +3,9 @@ import {ref, onMounted} from 'vue'
 import {TestCase} from '../models/testcase'
 import {Dict} from '../models/dict'
 import * as blogic from '../blogic'
+import {useRouter} from 'vue-router'
 
+const router = useRouter()
 const queryForm = ref({
     iterationId: null,
     title: '',
@@ -76,6 +78,9 @@ function handleAddClick() {
     testCaseForm.value = {... emptyTestCase}
     showDialog()
 }
+function handleViewClick(testCase) {
+    router.push(`/testCase/${testCase.id}`)
+}
 function handleEditClick(testCase) {
     TestCase.findOne(testCase.id).then(res => {
         if(res?.code == 0) {
@@ -93,13 +98,13 @@ function testCaseSubmitClick(submit) {
         TestCase.save(req).then(res => {
             if(res?.code == 0) {
                 blogic.showMessage('操作成功')
-                hideDialog()
                 loadTestCase()
             }else {
                 res?.showCodeDesc()
             }
         })
     }
+    hideDialog()
 }
 const iterationKey = ref(0)
 function handleIterationChange() {
@@ -143,6 +148,7 @@ function handleIterationChange() {
         <el-table-column prop="updateTime" label="修改时间"/>
         <el-table-column label="操作">
             <template #=rowData>
+                <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                 <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
             </template>
         </el-table-column>

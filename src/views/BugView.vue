@@ -2,7 +2,9 @@
 import {ref, onMounted} from 'vue'
 import {Bug} from '../models/bug'
 import * as blogic from '../blogic'
+import {useRouter} from 'vue-router'
 
+const router = useRouter()
 const bugs = ref([])
 const total = ref(0)
 const queryForm = ref({
@@ -65,23 +67,21 @@ function handleIterationChange() {
 function handleRequirementChange() {
     testCaseKey.value++
 }
-
 function showDialog() {
     dialogKey.value++
     dialog.value = true
 }
-
 function hideDialog() {
     dialog.value = false
 }
-
 function handleAddClick() {
     bugForm.value = {... emptyBugForm}
     showDialog()
 }
-
+function handleViewClick(bug) {
+    router.push(`/bug/${bug.id}`)
+}
 async function handleEditClick(bug) {
-    console.log(bug)
     let res = await Bug.findOne(bug.id)
     if(res?.code == 0) {
         bugForm.value = Bug.toBug([res.data])[0]
@@ -96,12 +96,12 @@ async function bugSubmitClick(submit) {
         let res = await Bug.save(bugForm.value)
         if(res?.code == 0) {
             blogic.showMessage('操作成功')
-            hideDialog()
             loadBug()
         }else {
             res?.showCodeDesc()
         }
     }
+    hideDialog()
 }
 
 </script>
@@ -141,6 +141,7 @@ async function bugSubmitClick(submit) {
         <el-table-column prop="fixSolution" label="方案"/>
         <el-table-column label="操作">
             <template #="rowData">
+                <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                 <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
             </template>
         </el-table-column>

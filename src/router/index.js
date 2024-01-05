@@ -64,9 +64,24 @@ const router = createRouter({
       component: () => import('../views/TaskView.vue')
     },
     {
+      path: '/task/:id',
+      name: 'taskDetail',
+      component: () => import('../views/TaskDetailView.vue')
+    },
+    {
       path: '/defect',
       name: 'defect',
       component: () => import('../views/DefectView.vue')
+    },
+    {
+      path: '/testCase/:id',
+      name: 'testCaseDetail',
+      component: () => import('../views/TestCaseDetailView.vue')
+    },
+    {
+      path: '/bug/:id',
+      name: 'bugDetail',
+      component: () => import('../views/BugDetailView.vue')
     },
     {
       path: '/statistics',

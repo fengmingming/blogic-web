@@ -8,7 +8,7 @@ const props = defineProps({
         type: String,
         requird: true
     },
-    disable: {
+    disabled: {
         type: Boolean,
         default: false
     },
@@ -98,7 +98,7 @@ const emit = defineEmits(['update:content'])
 const editor = Editor
 const editorContent = ref(props.content)
 const editorConfig = ref(props.disable?disableConfig:props.config)
-const disable = ref(props.disable)
+const disabled = ref(props.disabled)
 function blurFun() {
     emit('update:content', editorContent.value)
 }
@@ -107,5 +107,5 @@ onMounted(() => {
 })
 </script>
 <template>
-    <ckeditor :editor="editor" v-model="editorContent" :config="editorConfig" @blur="blurFun" :disable="disable"/>
+    <ckeditor :editor="editor" v-model="editorContent" :config="editorConfig" @blur="blurFun" :disabled="disabled" />
 </template>

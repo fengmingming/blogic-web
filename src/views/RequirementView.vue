@@ -84,12 +84,12 @@ async function submitClick(submit) {
         let res = await Requirement.save({id, productId, requirementName, requirementSources, requirementDesc, requirementStatus})
         if(res?.code == 0) {
             blogic.showMessage('操作成功')
-            hideDialog()
             loadRequirement()
         }else {
             res?.showCodeDesc()
         }
     }
+    hideDialog()
 }
 </script>
 <template>
