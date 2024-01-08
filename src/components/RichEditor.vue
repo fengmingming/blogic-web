@@ -97,7 +97,7 @@ let disableConfig = {
 const emit = defineEmits(['update:content'])
 const editor = Editor
 const editorContent = ref(props.content)
-const editorConfig = ref(props.disable?disableConfig:props.config)
+const editorConfig = ref(props.disabled?disableConfig:props.config)
 const disabled = ref(props.disabled)
 function blurFun() {
     emit('update:content', editorContent.value)
