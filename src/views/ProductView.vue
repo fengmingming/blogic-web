@@ -77,8 +77,9 @@ async function productSubmitClick(submit) {
 }
 async function handleEditClick(arg) {
     let product = blogic.handleResponse(await Product.findById(arg.id))
-    let {id, productName, productDesc} = {... product}
-    productParam.value = {id, productName, productDesc}
+    let {id, productName, productDesc, users} = {... product}
+    let userIds = users.map(user => user.id)
+    productParam.value = {id, productName, productDesc, userIds}
     richEditorKey.value++
     productDialog.value = true
 }
@@ -161,9 +162,7 @@ onMounted(() => {
                 <el-input v-model="productParam.productName" />
             </el-form-item>
             <el-form-item label="参与人员">
-                <el-select v-model="productParam.userIds" multiple>
-                    <el-option v-for="user in users" :key="user.id" :label="user.name" :value="user.id" />
-                </el-select>
+                <UserSelect v-model="productParam.userIds"/>
             </el-form-item>
             <el-form-item label="产品描述">
                 <RichEditor v-model:content="productParam.productDesc"/>

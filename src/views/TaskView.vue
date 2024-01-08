@@ -3,7 +3,9 @@ import {ref, onMounted} from 'vue'
 import {Task} from '../models/task'
 import {Dict} from '../models/dict'
 import * as blogic from '../blogic'
+import {useRouter} from 'vue-router'
 
+const router = useRouter()
 const tasks = ref([])
 const dialog = ref(false)
 const dialogKey = ref(0)
@@ -64,6 +66,9 @@ const taskForm = ref(emptyTask)
 function handleAddClick() {
     taskForm.value = {... emptyTask}
     showDialog()
+}
+function handleViewClick(task) {
+    router.push(`/task/${task.id}`)
 }
 function handleEditClick(task) {
     Task.findOne(task.id).then(res => {
@@ -140,6 +145,7 @@ function taskSubmitClick(submit) {
                     <el-table-column prop="updateTime" label="修改时间"/>
                     <el-table-column label="操作">
                         <template #="rowData">
+                            <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                             <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
                         </template>
                     </el-table-column>

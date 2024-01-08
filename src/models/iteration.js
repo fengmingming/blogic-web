@@ -13,7 +13,7 @@ class Iteration {
         this.createUserId = props.createUserId
         this.createTime = props.createTime
         this.updateTime = props.updateTime
-        this.userIds = props.userIds
+        this.users = props.users
     }
 
     static toIteration(arr) {

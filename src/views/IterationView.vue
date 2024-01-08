@@ -75,7 +75,9 @@ function handleViewClick(iteration) {
 async function handleEditClick(iteration) {
     let res = await Iteration.findOne(iteration.id)
     res = blogic.handleResponse(res)
-    iterationForm.value = new Iteration(res)
+    iteration = new Iteration(res)
+    iteration.userIds = iteration.users?.map(it => it.id)
+    iterationForm.value = iteration
     showDialog()
 }
 </script>

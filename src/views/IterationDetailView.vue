@@ -15,7 +15,7 @@
                     {{ iteration.scheduledStartTime }} <span v-if="iteration.scheduledEndTime">到</span> {{ iteration.scheduledEndTime }}
                 </el-form-item>
                 <el-form-item label="迭代参与者:">
-                    <el-text v-for="user in iteration.users"></el-text>
+                    <el-text v-for="user in iteration.users">{{ user.name }}</el-text>
                 </el-form-item>
             </el-form>
         </template>
