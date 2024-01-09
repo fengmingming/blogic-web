@@ -3,6 +3,7 @@ import {ref, onMounted} from 'vue'
 import {Bug} from '../models/bug'
 import * as blogic from '../blogic'
 import {useRouter} from 'vue-router'
+import {Dict} from '../models/dict'
 
 const router = useRouter()
 const bugs = ref([])
@@ -30,9 +31,16 @@ function handleCurrentChange(pageNum) {
 }
 
 async function loadBug() {
+    let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('bug_status')))
+    let fixSolutionDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('bug_fix_solution')))
     let res = await Bug.findList(queryForm.value)
     if(res?.code == 0) {
-        bugs.value = Bug.toBug(res.data.records)
+        let datas = Bug.toBug(res.data.records)
+        datas.forEach(data => {
+            data.fixSolutionName = fixSolutionDict[data.fixSolution]
+            data.statusName = statusDict[data.status]
+        })
+        bugs.value = datas
         total.value = res.data.total
     }else {
         res?.showCodeDesc()
@@ -155,8 +163,8 @@ function bugSubmitClick(submit) {
         <el-row>
             <el-col :span="22">
                 <el-form :inline="true" v-model="queryForm">
-                    <el-form-item label="ID">
-                        <el-input v-model="queryForm.id"/>
+                    <el-form-item label="ID" style="width: 150px">
+                        <el-input type="number" v-model="queryForm.id" :min="0"/>
                     </el-form-item>
                     <el-form-item label="迭代">
                         <IterationSelect v-model="queryForm.iterationId"/>
@@ -170,17 +178,20 @@ function bugSubmitClick(submit) {
                     <el-form-item label="标题">
                         <el-input v-model="queryForm.title"/>
                     </el-form-item>
-                    <el-form-item label="状态">
+                    <el-form-item label="状态" style="width: 200px">
                         <DictSelect v-model="queryForm.status" dictType="bug_status"/>
                     </el-form-item>
-                    <el-form-item label="bug类型">
+                    <el-form-item label="bug类型" style="width: 200px">
                         <DictSelect v-model="queryForm.bugType" dictType="bug_type"/>
                     </el-form-item>
-                    <el-form-item label="环境">
+                    <el-form-item label="环境" style="width: 200px">
                         <DictSelect v-model="queryForm.env" dictType="bug_env"/>
                     </el-form-item>
-                    <el-form-item label="处理人">
+                    <el-form-item label="指派给">
                         <UserSelect v-model="queryForm.currentUserId" :multiple="false"/>
+                    </el-form-item>
+                    <el-form-item label="解决者">
+                        <UserSelect v-model="queryForm.fixUserId" :multiple="false"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadBug">查询</el-button>
@@ -197,12 +208,13 @@ function bugSubmitClick(submit) {
         <el-table-column prop="severity" label="级别"/>
         <el-table-column prop="priority" label="优先级"/>
         <el-table-column prop="title" label="Bug标题"/>
-        <el-table-column prop="status" label="状态"/>
-        <el-table-column prop="createUserName" label="创建人"/>
+        <el-table-column prop="statusName" label="状态"/>
         <el-table-column prop="currentUserName" label="指派给"/>
-        <el-table-column prop="fixUserName" label="解决"/>
-        <el-table-column prop="fixSolution" label="方案"/>
-        <el-table-column label="操作">
+        <el-table-column prop="fixUserName" label="解决人"/>
+        <el-table-column prop="fixSolutionName" label="解决方案"/>
+        <el-table-column prop="createUserName" label="创建人"/>
+        <el-table-column prop="createTime" label="创建时间"/>
+        <el-table-column label="操作" fixed="right" width="200px">
             <template #="rowData">
                 <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                 <el-button @click="handleEditClick(rowData.row)">编辑</el-button>

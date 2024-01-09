@@ -148,13 +148,13 @@ function handleIterationChange() {
                         <IterationSelect v-model="queryForm.iterationId"/>
                     </el-form-item>
                     <el-form-item label="需求">
-                        <IterationSelect v-model="queryForm.requirementId"/>
+                        <RequirementSelect v-model="queryForm.requirementId"/>
                     </el-form-item>
                     <el-form-item label="标题">
                         <el-input v-model="queryForm.title"/>
                     </el-form-item>
                     <el-form-item label="冒烟">
-                        <el-select v-model="queryForm.smoke" :clearable="true" style="width: 70px">
+                        <el-select v-model="queryForm.smoke" :clearable="true" style="width: 90px">
                             <el-option label="是" :value="true" />
                             <el-option label="否" :value="false" />
                         </el-select>
@@ -186,7 +186,7 @@ function handleIterationChange() {
         <el-table-column prop="createUserName" label="创建人"/>
         <el-table-column prop="createTime" label="创建时间"/>
         <el-table-column prop="updateTime" label="修改时间"/>
-        <el-table-column label="操作">
+        <el-table-column label="操作" fixed="right" width="200px">
             <template #=rowData>
                 <el-button @click="handleViewClick(rowData.row)">查看</el-button>
                 <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
