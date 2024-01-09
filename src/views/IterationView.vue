@@ -40,12 +40,28 @@ const emptyIteration = {
     name:null,
     versionCode:null,
     productId: blogic.getCurProductId(),
-    status:null,
-    scheduledStartTime:null,
-    scheduledEndTime:null,
-    userIds:[]
+    status: null,
+    scheduledStartTime: null,
+    scheduledEndTime: null,
+    userIds: []
 }
 const iterationForm = ref(emptyIteration)
+const iterationFormRef = ref()
+const iterationFormRules = ref({
+    name: [{
+        required: true, trigger:'blur', message: ''
+    },{
+        max: 200, trigger: 'blur', message: '最多200字'
+    }],
+    status:[{
+        required: true, trigger:'blur', message: ''
+    }],
+    versionCode:[{
+        required: true, trigger:'blur', message: ''
+    }, {
+        max: 50, trigger:'blur', message: '最多50个字'
+    }]
+})
 function showDialog() {
     dialog.dialogKey++
     dialog.value = true
@@ -57,18 +73,26 @@ function handleAddClick() {
     iterationForm.value = {... emptyIteration}
     showDialog()
 }
-async function iterationSubmitClick(submit) {
+function iterationSubmitClick(submit) {
     if(submit) {
-        let {id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds} = {... iterationForm.value}
-        let res = await Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds})
-        if(res?.code == 0) {
-            blogic.showMessage('操作成功')
-            loadIteration()
-        }else {
-            res?.showCodeDesc()
-        }
+        iterationFormRef.value.validate((valid, fields) => {
+            console.log(valid, fields)
+            if(valid) {
+                let {id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds} = {... iterationForm.value}
+                Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds}).then(res => {
+                    if(res?.code == 0) {
+                        blogic.showMessage('操作成功')
+                        hideDialog()
+                        loadIteration()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
+            }
+        })
+    }else {
+        hideDialog()
     }
-    hideDialog()
 }
 function handleViewClick(iteration) {
     router.push(`/iteration/${iteration.id}`)
@@ -129,14 +153,14 @@ async function handleEditClick(iteration) {
         </template>
     </MainContainer>
     <el-dialog v-model="dialog" :key="dialogKey">
-        <el-form :model="iterationForm" label-width="100px">
-            <el-form-item label="迭代名称">
+        <el-form :model="iterationForm" label-width="100px" :rules="iterationFormRules" ref="iterationFormRef">
+            <el-form-item label="迭代名称" prop="name">
                 <el-input v-model="iterationForm.name"/>
             </el-form-item>
-            <el-form-item label="迭代版本号">
+            <el-form-item label="迭代版本号" prop="versionCode">
                 <el-input v-model="iterationForm.versionCode" />
             </el-form-item>
-            <el-form-item label="迭代状态">
+            <el-form-item label="迭代状态" prop="status" v-if="iterationForm.id">
                 <DictSelect v-model="iterationForm.status" dictType="iteration_status" />
             </el-form-item>
             <el-form-item label="迭代时间">

@@ -8,8 +8,7 @@ const props = defineProps({
         required: true
     },
     modelValue: {
-        type: Number,
-        default: null
+        
     },
     multiple: {
         type: Boolean,
@@ -26,7 +25,7 @@ const props = defineProps({
 })
 const emits = defineEmits(['update:modelValue'])
 const dictDatas = ref([])
-const value = ref(props.modelValue)
+const value = ref(typeof props.modelValue === 'string'?parseInt(props.modelValue):props.modelValue)
 const disabled = ref(props.disabled)
 const readOnly = ref(props.readOnly)
 onMounted(() => {

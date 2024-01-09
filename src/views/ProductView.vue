@@ -44,29 +44,51 @@ const emptyProduct = {
     productDesc:'',
     userIds:[]
 }
+const productParamRules = ref({
+    productName: [{
+        required: true, message: '', trigger: 'blur'
+    }, {
+        min: 1, max: 200, trigger: 'blur'
+    }],
+    productDesc: [{
+        required: true, message: '产品描述必填', trigger: 'blur'
+    }],
+    userIds: [{
+        required: true, message: '', trigger: 'change'
+    }]
+})
 const users = ref([])
 const productParam = ref(emptyProduct)
+const productParamRef = ref()
 function productDialogShow() {
     productParam.value = emptyProduct
     richEditorKey.value++
     productDialog.value = true
 }
 async function productSubmitClick(submit) {
-    productDialog.value = false
     if(submit) {
-        let product = {...productParam.value}
-        let res = null;
-        if(product.id) {
-            res = await Product.editProduct(product)
-        }else {
-            res = await Product.createProduct(product)
-        }
-        if(res?.code == 0) {
-            blogic.showMessage('保存成功')
-            reload()
-        }else {
-            res?.showCodeDesc()
-        }
+        await productParamRef.value.validate((valid, fields) => {
+            if(valid) {
+                let product = {...productParam.value}
+                let res = null;
+                if(product.id) {
+                    res = Product.editProduct(product)
+                }else {
+                    res = Product.createProduct(product)
+                }
+                res.then((res) => {
+                    if(res?.code == 0) {
+                        blogic.showMessage('保存成功')
+                        productDialog.value = false
+                        reload()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
+            }
+        })
+    }else {
+        productDialog.value = false
     }
 }
 async function handleEditClick(arg) {
@@ -148,14 +170,14 @@ onMounted(() => {
     </MainContainer>
     <!-- 新增和编辑产品信息 -->
     <el-dialog v-model="productDialog" :key="richEditorKey">
-        <el-form>
-            <el-form-item label="产品名称">
+        <el-form :model="productParam" ref="productParamRef" :rules="productParamRules">
+            <el-form-item label="产品名称" prop="productName">
                 <el-input v-model="productParam.productName" />
             </el-form-item>
-            <el-form-item label="参与人员">
+            <el-form-item label="参与人员" prop="userIds">
                 <UserSelect v-model="productParam.userIds"/>
             </el-form-item>
-            <el-form-item label="产品描述">
+            <el-form-item label="产品描述" prop="productDesc">
                 <RichEditor v-model:content="productParam.productDesc"/>
             </el-form-item>
         </el-form>

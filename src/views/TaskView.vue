@@ -12,6 +12,7 @@ const dialogKey = ref(0)
 const queryForm = ref({
     pageSize:10,
     pageNum:1,
+    requirementId: null,
     iterationId: null,
     taskName: '',
     currentUserId: null,
@@ -65,6 +66,29 @@ const emptyTask = {
     taskDesc: ''
 }
 const taskForm = ref(emptyTask)
+const taskFormRef = ref()
+const taskFormRules = ref({
+    taskName: [{
+        required: true, message: '', trigger: 'blur'
+    }, {
+        max: 200, message: '最多200字', trigger: 'blur'
+    }],
+    status: [{
+        required: true, message: '', trigger: 'change'
+    }],
+    priority: [{
+        required: true, message: '', trigger: 'change'
+    }],
+    overallTime: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    consumeTime: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    taskDesc: [{
+        required: true, message: '', trigger: 'blur'
+    }]
+})
 const productId = blogic.getCurProductId()
 function handleAddClick() {
     taskForm.value = {... emptyTask}
@@ -97,16 +121,22 @@ function handleIterationChange(iterationId) {
 }
 function taskSubmitClick(submit) {
     if(submit) {
-        Task.save(taskForm.value).then(res => {
-            if(res?.code == 0) {
-                blogic.showMessage('操作成功')
-                loadTasks()
-            }else {
-                res?.showCodeDesc()
+        taskFormRef.value.validate((valid, fields) => {
+            if(valid) {
+                Task.save(taskForm.value).then(res => {
+                    if(res?.code == 0) {
+                        blogic.showMessage('操作成功')
+                        hideDialog()
+                        loadTasks()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
             }
         })
+    }else {
+        hideDialog()
     }
-    hideDialog()
 }
 </script>
 <template>
@@ -116,15 +146,18 @@ function taskSubmitClick(submit) {
         </template>
         <template #default>
             <el-row>
-                <el-col :span="22">
+                <el-col :span="23">
                     <el-form :inline="true" v-model="queryForm">
                         <el-form-item label="迭代">
                             <IterationSelect v-model="queryForm.iterationId" />
                         </el-form-item>
-                        <el-form-item label="任务名称">
+                        <el-form-item label="需求">
+                            <RequirementSelect v-model="queryForm.requirementId" />
+                        </el-form-item>
+                        <el-form-item label="名称">
                             <el-input v-model="queryForm.taskName"/>
                         </el-form-item>
-                        <el-form-item label="状态">
+                        <el-form-item label="状态" style="width: 150px">
                             <DictSelect v-model="queryForm.status" dictType="task_status"/>
                         </el-form-item>
                         <el-form-item label="处理人">
@@ -138,13 +171,14 @@ function taskSubmitClick(submit) {
                         </el-form-item>
                     </el-form>
                 </el-col>
-                <el-col :span="2" style="text-align: right;">
+                <el-col :span="1" style="text-align: right;">
                     <el-button type="primary" @click="handleAddClick">新建任务</el-button>
                 </el-col>
             </el-row>
             <div style="padding-top: 20px">
                 <el-table :data="tasks" border style="width: 100%">
                     <el-table-column prop="iterationName" label="迭代名称"/>
+                    <el-table-column prop="requirementName" label="关联需求"/>
                     <el-table-column prop="taskName" label="任务名称"/>
                     <el-table-column prop="currentUserName" label="指派给"/>
                     <el-table-column prop="completeUserName" label="由谁完成"/>
@@ -174,42 +208,34 @@ function taskSubmitClick(submit) {
         </template>
     </MainContainer>
     <el-dialog v-model="dialog" :key="dialogKey" width="55%">
-        <el-form v-model="taskForm" label-width="100px">
-            <el-form-item label="任务名称">
+        <el-form :model="taskForm" label-width="100px" :rules="taskFormRules" ref="taskFormRef">
+            <el-form-item label="任务名称:" prop="taskName">
                 <el-input v-model="taskForm.taskName"/>
             </el-form-item>
-            <el-form-item label="所属迭代" >
+            <el-form-item label="所属迭代:" prop="iterationId">
                 <IterationSelect v-model="taskForm.iterationId" @change="handleIterationChange"/>
             </el-form-item>
-            <el-form-item label="关联需求" >
+            <el-form-item label="关联需求:" prop="requirementId">
                 <RequirementSelect v-model="taskForm.requirementId" :iterationId="taskForm.iterationId" :key="iterationKey"/>
             </el-form-item>
-            <el-form-item label="任务状态">
+            <el-form-item label="任务状态:" v-if="taskForm.id" prop="status">
                 <DictSelect v-model="taskForm.status" dictType="task_status"/>
             </el-form-item>
-            <el-form-item label="优先级">
+            <el-form-item label="优先级:" prop="priority">
                 <DictSelect v-model="taskForm.priority" dictType="task_priority"/>
             </el-form-item>
-            <el-form-item label="进度">
-                <el-col :span="2" style="text-align:right;padding-right: 15px;">
-                    <span>预计</span>
-                </el-col>
-                <el-col :span="3">
+            <el-form-item label="进度:">
+                <el-form-item prop="overallTime" label="预计" label-width="70px">
                     <el-input-number v-model="taskForm.overallTime" :min="0"/>
-                </el-col>
-                <el-col :span="4"></el-col>
-                <el-col :span="2" style="text-align:right;padding-right: 15px;">
-                    <span>消耗</span>
-                </el-col>
-                <el-col :span="3">
+                </el-form-item>
+                <el-form-item prop="consumeTime" label="消耗" label-width="70px">
                     <el-input-number v-model="taskForm.consumeTime" :min="0"/>
-                </el-col>
-                <el-col :span="10"/>
+                </el-form-item>
             </el-form-item>
-            <el-form-item label="指派给">
+            <el-form-item label="指派给:" prop="currentUserId">
                 <UserSelect :multiple="false" v-model="taskForm.currentUserId" :iterationId="taskForm.iterationId" :productId="taskForm.productId" />
             </el-form-item>
-            <el-form-item label="任务描述">
+            <el-form-item label="任务描述:" prop="taskDesc">
                 <RichEditor v-model:content="taskForm.taskDesc" />
             </el-form-item>
         </el-form>

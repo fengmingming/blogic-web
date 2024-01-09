@@ -51,13 +51,31 @@ onMounted(() => {
 //新增，编辑需求
 const emptyRequirement = {
     id: null,
-    productId:'',
     requirementName:'',
     requirementSources:'',
     requirementDesc:'',
     requirementStatus: null
 }
 const requirementForm = ref(emptyRequirement)
+const requirementFormRef = ref()
+const requirementFormRules = ref({
+    requirementName: [{
+        required: true, message:'', trigger: 'blur'
+    },{
+        max: 200, message:'最多200字', trigger: 'blur'
+    }],
+    requirementSources: [{
+        required: true, message:'', trigger: 'blur'
+    },{
+        max: 200, message: '最多200字', trigger:'blur'
+    }],
+    requirementDesc: [{
+        required: true, message:'', trigger: 'blur'
+    }],
+    requirementStatus: [{
+        required: true, message:'', trigger: 'change'
+    }]
+})
 const editDialog = ref(false)
 const richEditorKey = ref(1)
 function showDialog() {
@@ -76,22 +94,29 @@ function handleViewClick(arg) {
 }
 async function handleEditClick(arg) {
     let requirement = blogic.handleResponse(await Requirement.findOne(arg.id))
-    let {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirement}
-    requirementForm.value = {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus}
+    let {id, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirement}
+    requirementForm.value = {id, requirementName, requirementSources, requirementDesc, requirementStatus}
     showDialog()
 }
-async function submitClick(submit) {
+function submitClick(submit) {
     if(submit) {
-        let {id, productId, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirementForm.value}
-        let res = await Requirement.save({id, productId, requirementName, requirementSources, requirementDesc, requirementStatus})
-        if(res?.code == 0) {
-            blogic.showMessage('操作成功')
-            loadRequirement()
-        }else {
-            res?.showCodeDesc()
-        }
+        requirementFormRef.value.validate((valid, fields) => {
+            if(valid) {
+                let {id, requirementName, requirementSources, requirementDesc, requirementStatus} = {... requirementForm.value}
+                Requirement.save({id, requirementName, requirementSources, requirementDesc, requirementStatus}).then(res => {
+                    if(res?.code == 0) {
+                        blogic.showMessage('操作成功')
+                        hideDialog()
+                        loadRequirement()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
+            }
+        })
+    }else {
+        hideDialog()
     }
-    hideDialog()
 }
 </script>
 <template>
@@ -156,17 +181,17 @@ async function submitClick(submit) {
         </template>
     </MainContainer>
     <el-dialog v-model="editDialog" :key="richEditorKey">
-        <el-form v-model="requirementForm">
-            <el-form-item label="需求名称">
+        <el-form :model="requirementForm" ref="requirementFormRef" :rules="requirementFormRules">
+            <el-form-item label="需求名称" prop="requirementName">
                 <el-input v-model="requirementForm.requirementName" />
             </el-form-item>
-            <el-form-item label="需求来源">
+            <el-form-item label="需求来源" prop="requirementSources">
                 <el-input v-model="requirementForm.requirementSources" />
             </el-form-item>
-            <el-form-item label="需求状态">
+            <el-form-item label="需求状态" v-if="requirementForm.id" prop="requirementStatus">
                 <DictSelect v-model="requirementForm.requirementStatus" dictType="requirement_status"/>
             </el-form-item>
-            <el-form-item label="需求描述">
+            <el-form-item label="需求描述" prop="requirementDesc">
                 <RichEditor v-model:content="requirementForm.requirementDesc"/>
             </el-form-item>
         </el-form>

@@ -62,6 +62,39 @@ const emptyBugForm = {
 }
 
 const bugForm = ref(emptyBugForm)
+const bugFormRef = ref()
+const bugFormRules = ref({
+    title: [{
+        required: true, message: '', trigger: 'blur'
+    }, {
+        max: 200, message: '最多200字', trigger: 'blur'
+    }],
+    iterationVersion: [{
+        max: 50, message: '最多50字', trigger: 'blur'
+    }],
+    bugType: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    env: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    device: [{
+        max: 200, message: '最多200字', trigger: 'blur'
+    }],
+    reproSteps: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    status: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    severity: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    priority: [{
+        required: true, message: '', trigger: 'blur'
+    }]
+})
+
 const dialog = ref(false)
 const dialogKey = ref(0)
 const requirementKey = ref(0)
@@ -96,18 +129,24 @@ async function handleEditClick(bug) {
         res?.showCodeDesc()
     }
 }
-
-async function bugSubmitClick(submit) {
+function bugSubmitClick(submit) {
     if(submit) {
-        let res = await Bug.save(bugForm.value)
-        if(res?.code == 0) {
-            blogic.showMessage('操作成功')
-            loadBug()
-        }else {
-            res?.showCodeDesc()
-        }
+        bugFormRef.value.validate((valid, fields) => {
+            if(valid) {
+                Bug.save(bugForm.value).then(res => {
+                    if(res?.code == 0) {
+                        blogic.showMessage('操作成功')
+                        hideDialog()
+                        loadBug()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
+            }
+        })
+    }else {
+        hideDialog()
     }
-    hideDialog()
 }
 
 </script>
@@ -181,8 +220,8 @@ async function bugSubmitClick(submit) {
             @current-change="handleCurrentChange" />
     </div>
     <el-dialog v-model="dialog" :key="dialogKey" width="55%">
-        <el-form v-model="bugForm" label-width="100px">
-            <el-form-item label="关联迭代">
+        <el-form :model="bugForm" label-width="100px" :rules="bugFormRules" ref="bugFormRef">
+            <el-form-item label="关联迭代" prop="iterationId">
                 <IterationSelect v-model="bugForm.iterationId" @change="handleIterationChange"/>
             </el-form-item>
             <el-form-item label="关联需求">
@@ -191,34 +230,34 @@ async function bugSubmitClick(submit) {
             <el-form-item label="关联用例">
                 <TestCaseSelect v-model="bugForm.testCaseId" :iterationId="bugForm.iterationId" :requirementId="bugForm.requirementId" :key="testCaseKey"/>
             </el-form-item>
-            <el-form-item label="版本号">
+            <el-form-item label="版本号" prop="iterationVersion">
                 <el-input v-model="bugForm.iterationVersion"/>
             </el-form-item>
-            <el-form-item label="标题">
+            <el-form-item label="标题" prop="title">
                 <el-input v-model="bugForm.title"/>
             </el-form-item>
-            <el-form-item label="bug类型">
+            <el-form-item label="bug类型" prop="bugType">
                 <DictSelect v-model="bugForm.bugType" dictType="bug_type"/>
             </el-form-item>
-            <el-form-item label="环境">
+            <el-form-item label="环境" prop="env">
                 <DictSelect v-model="bugForm.env" dictType="bug_env"/>
             </el-form-item>
-            <el-form-item label="设备">
+            <el-form-item label="设备" prop="device">
                 <el-input v-model="bugForm.device" />
             </el-form-item>
-            <el-form-item label="重现步骤">
+            <el-form-item label="重现步骤" prop="reproSteps">
                 <RichEditor v-model="bugForm.reproSteps" />
             </el-form-item>
-            <el-form-item label="状态">
+            <el-form-item label="状态" prop="status" v-if="bugForm.id">
                 <DictSelect v-model="bugForm.status" dictType="bug_status"/>
             </el-form-item>
-            <el-form-item label="严重程度">
+            <el-form-item label="严重程度" prop="severity">
                 <DictSelect v-model="bugForm.severity" dictType="bug_severity"/>
             </el-form-item>
-            <el-form-item label="优先级">
+            <el-form-item label="优先级" prop="priority">
                 <DictSelect v-model="bugForm.priority" dictType="bug_priority"/>
             </el-form-item>
-            <el-form-item label="指派给">
+            <el-form-item label="指派给" prop="currentUserId">
                 <UserSelect :multiple="false" v-model="bugForm.currentUserId"/>
             </el-form-item>
         </el-form>

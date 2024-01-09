@@ -78,6 +78,24 @@ const emptyTestCase = {
     steps: null
 }
 const testCaseForm = ref(emptyTestCase)
+const testCaseFormRef = ref()
+const testCaseFormRules = ref({
+    title: [{
+        required: true, message: '', trigger: 'blur'
+    }, {
+        max: 200, message: '', trigger: 'blur'
+    }],
+    priority: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    status: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    smoke: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+})
+
 function handleAddClick() {
     testCaseForm.value = {... emptyTestCase}
     showDialog()
@@ -98,17 +116,23 @@ function handleEditClick(testCase) {
 }
 function testCaseSubmitClick(submit) {
     if(submit) {
-        let req = testCaseForm.value
-        TestCase.save(req).then(res => {
-            if(res?.code == 0) {
-                blogic.showMessage('操作成功')
-                loadTestCase()
-            }else {
-                res?.showCodeDesc()
+        testCaseFormRef.value.validate((valid, fields) => {
+            if(valid) {
+                let req = testCaseForm.value
+                TestCase.save(req).then(res => {
+                    if(res?.code == 0) {
+                        blogic.showMessage('操作成功')
+                        hideDialog()
+                        loadTestCase()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
             }
         })
+    }else {
+        hideDialog()
     }
-    hideDialog()
 }
 const iterationKey = ref(0)
 function handleIterationChange() {
@@ -157,7 +181,7 @@ function handleIterationChange() {
         <el-table-column prop="title" label="用例标题"/>
         <el-table-column prop="priority" label="优先级"/>
         <el-table-column prop="ownerUserName" label="负责人"/>
-        <el-table-column prop="smoke" label="是否冒烟"/>
+        <el-table-column prop="smoke" label="是否冒烟" :formatter="(row, column, cellValue, index) => cellValue?'是':'否'"/>
         <el-table-column prop="status" label="状态"/>
         <el-table-column prop="createUserName" label="创建人"/>
         <el-table-column prop="createTime" label="创建时间"/>
@@ -181,17 +205,17 @@ function handleIterationChange() {
             />
     </div>
     <el-dialog v-model="dialog" :key="dialogKey" width="55%">
-        <el-form v-model="testCaseForm" label-width="100px">
-            <el-form-item label="所属迭代">
+        <el-form :model="testCaseForm" label-width="100px" :rules="testCaseFormRules" ref="testCaseFormRef">
+            <el-form-item label="所属迭代" prop="iterationId">
                 <IterationSelect v-model="testCaseForm.iterationId" @change="handleIterationChange"/>
             </el-form-item>
             <el-form-item label="关联需求">
                 <RequirementSelect v-model="testCaseForm.requirementId" :iterationId="testCaseForm.iterationId" :key="iterationKey"/>
             </el-form-item>
-            <el-form-item label="用例标题">
+            <el-form-item label="用例标题" prop="title">
                 <el-input v-model="testCaseForm.title"/>
             </el-form-item>
-            <el-form-item label="优先级">
+            <el-form-item label="优先级" prop="priority">
                 <DictSelect v-model="testCaseForm.priority" dictType="task_priority"/>
             </el-form-item>
             <el-form-item label="前置条件">
@@ -203,13 +227,13 @@ function handleIterationChange() {
             <el-form-item label="用例负责人">
                 <UserSelect v-model="testCaseForm.ownerUserId" :productId="testCaseForm.productId" :iterationId="testCaseForm.iterationId" :key="iterationKey" :multiple="false"/>
             </el-form-item>
-            <el-form-item label="是否冒烟">
+            <el-form-item label="是否冒烟" prop="smoke">
                 <el-radio-group v-model="testCaseForm.smoke">
                     <el-radio :label="true">是</el-radio>
                     <el-radio :label="false">否</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="用例状态">
+            <el-form-item label="用例状态" v-if="testCaseForm.id" prop="status">
                 <DictSelect v-model="testCaseForm.status" dictType="testcase_status"/>
             </el-form-item>
         </el-form>
