@@ -9,21 +9,15 @@ const router = useRouter()
 const products = ref([])
 const total = ref(0)
 const queryForm = ref({
-    types: [1],
     productName:'',
+    createUserId: null,
     pageSize:10,
     pageNum:1
 })
 const reload = inject('reload')
 async function loadProducts() {
-    if(queryForm.value.types.length > 1) {
-        queryForm.value.types.shift()
-    }
     let context = blogic.loadContext()
-    let {types, ...queryParams} = {companyId: context.currentCompany.companyId, ... queryForm.value}
-    if(types[0] == 2) {
-        queryParams.createUserId = context.user.userId 
-    }
+    let {... queryParams} = {companyId: context.currentCompany.companyId, ... queryForm.value}
     let productRes = await Product.find(queryParams)
     if(productRes?.code === 0){
         products.value = Product.toProduct(productRes.data.records)
@@ -109,14 +103,11 @@ onMounted(() => {
             <el-row>
                 <el-col :span="12">
                     <el-form :inline="true" v-model="queryForm">
-                        <el-form-item>
-                            <el-checkbox-group v-model="queryForm.types" @change="loadProducts">
-                                <el-checkbox-button :label="1">我参与的</el-checkbox-button>
-                                <el-checkbox-button :label="2">我创建的</el-checkbox-button>
-                            </el-checkbox-group>
-                        </el-form-item>
                         <el-form-item label="产品名称">
                             <el-input clearable v-model="queryForm.productName" maxLength="254"/>
+                        </el-form-item>
+                        <el-form-item label="创建人">
+                            <UserSelect v-model="queryForm.createUserId" :multiple="false"/>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="loadProducts">查询</el-button>

@@ -12,8 +12,10 @@ const dialogKey = ref(0)
 const queryForm = ref({
     pageSize:10,
     pageNum:1,
-    iterationName:'',
-    taskName:'',
+    iterationId: null,
+    taskName: '',
+    currentUserId: null,
+    completeUserId: null,
     status:null
 })
 const total = ref(0)
@@ -63,6 +65,7 @@ const emptyTask = {
     taskDesc: ''
 }
 const taskForm = ref(emptyTask)
+const productId = blogic.getCurProductId()
 function handleAddClick() {
     taskForm.value = {... emptyTask}
     showDialog()
@@ -113,10 +116,10 @@ function taskSubmitClick(submit) {
         </template>
         <template #default>
             <el-row>
-                <el-col :span="20">
+                <el-col :span="22">
                     <el-form :inline="true" v-model="queryForm">
-                        <el-form-item label="迭代名称">
-                            <el-input v-model="queryForm.iterationName"/>
+                        <el-form-item label="迭代">
+                            <IterationSelect v-model="queryForm.iterationId" />
                         </el-form-item>
                         <el-form-item label="任务名称">
                             <el-input v-model="queryForm.taskName"/>
@@ -124,12 +127,18 @@ function taskSubmitClick(submit) {
                         <el-form-item label="状态">
                             <DictSelect v-model="queryForm.status" dictType="task_status"/>
                         </el-form-item>
+                        <el-form-item label="处理人">
+                            <UserSelect v-model="queryForm.currentUserId" :productId="productId" :multiple="false"/>
+                        </el-form-item>
+                        <el-form-item label="完成人">
+                            <UserSelect v-model="queryForm.completeUserId" :productId="productId" :multiple="false"/>
+                        </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="loadTasks">查询</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
-                <el-col :span="4" style="text-align: right;">
+                <el-col :span="2" style="text-align: right;">
                     <el-button type="primary" @click="handleAddClick">新建任务</el-button>
                 </el-col>
             </el-row>

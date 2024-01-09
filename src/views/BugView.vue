@@ -8,9 +8,15 @@ const router = useRouter()
 const bugs = ref([])
 const total = ref(0)
 const queryForm = ref({
-    id:'',
-    title:'',
-    status:null,
+    id: '',
+    iterationId: null,
+    requirementId: null,
+    testCaseId: null,
+    title: '',
+    status: null,
+    bugType: null,
+    env: null,
+    currentUserId: null,
     pageSize:10,
     pageNum:1
 })
@@ -108,10 +114,19 @@ async function bugSubmitClick(submit) {
 <template>
     <div style="padding-top: 20px">
         <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
                 <el-form :inline="true" v-model="queryForm">
                     <el-form-item label="ID">
                         <el-input v-model="queryForm.id"/>
+                    </el-form-item>
+                    <el-form-item label="迭代">
+                        <IterationSelect v-model="queryForm.iterationId"/>
+                    </el-form-item>
+                    <el-form-item label="需求">
+                        <RequirementSelect v-model="queryForm.requirementId"/>
+                    </el-form-item>
+                    <el-form-item label="用例">
+                        <TestCaseSelect v-model="queryForm.testCaseId"/>
                     </el-form-item>
                     <el-form-item label="标题">
                         <el-input v-model="queryForm.title"/>
@@ -119,12 +134,21 @@ async function bugSubmitClick(submit) {
                     <el-form-item label="状态">
                         <DictSelect v-model="queryForm.status" dictType="bug_status"/>
                     </el-form-item>
+                    <el-form-item label="bug类型">
+                        <DictSelect v-model="queryForm.bugType" dictType="bug_type"/>
+                    </el-form-item>
+                    <el-form-item label="环境">
+                        <DictSelect v-model="queryForm.env" dictType="bug_env"/>
+                    </el-form-item>
+                    <el-form-item label="处理人">
+                        <UserSelect v-model="queryForm.currentUserId" :multiple="false"/>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadBug">查询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
-            <el-col :span="4" style="text-align: right">
+            <el-col :span="2" style="text-align: right">
                 <el-button type="primary" @click="handleAddClick">新建缺陷</el-button>
             </el-col>
         </el-row>

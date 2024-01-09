@@ -13,7 +13,9 @@ const queryForm = ref({
     pageSize: 10,
     pageNum: 1,
     requirementName: '',
-    requirementStatus: null
+    requirementSources: '',
+    requirementStatus: null,
+    createUserId: null
 })
 async function loadRequirement() {
     let res = await Requirement.findList({...queryForm.value})
@@ -100,20 +102,26 @@ async function submitClick(submit) {
         <template #default>
             <div>
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="22">
                         <el-form :inline="true" v-model="queryForm">
                             <el-form-item label="需求名称">
                                 <el-input clearable v-model="queryForm.requirementName"/>
                             </el-form-item>
+                            <el-form-item label="需求来源">
+                                <el-input clearable v-model="queryForm.requirementSources"/>
+                            </el-form-item>
                             <el-form-item label="需求状态">
                                 <DictSelect v-model="queryForm.requirementStatus" dictType="requirement_status"/>
+                            </el-form-item>
+                            <el-form-item label="创建人">
+                                <UserSelect v-model="queryForm.createUserId" :multiple="false"/>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="loadRequirement">查询</el-button>
                             </el-form-item>
                         </el-form>
                     </el-col>
-                    <el-col :span="12" style="text-align: right;">
+                    <el-col :span="2" style="text-align: right;">
                         <el-button type="primary" @click="handleAddClick">新建需求</el-button>
                     </el-col>
                 </el-row>

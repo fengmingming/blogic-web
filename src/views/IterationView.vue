@@ -9,6 +9,7 @@ const router = useRouter()
 const queryForm = ref({
     name: '',
     status: null,
+    createUserId: null,
     pageNum: 1,
     pageSize: 10
 })
@@ -88,7 +89,7 @@ async function handleEditClick(iteration) {
         </template>
         <template #default>
             <el-row>
-                <el-col :span="12">
+                <el-col :span="22">
                     <el-form :inline="true" v-model="queryForm">
                         <el-form-item label="迭代名称">
                             <el-input v-model="queryForm.name"/>
@@ -96,12 +97,15 @@ async function handleEditClick(iteration) {
                         <el-form-item label="迭代状态">
                             <DictSelect v-model="queryForm.status" dictType="iteration_status"/>
                         </el-form-item>
+                        <el-form-item label="创建人">
+                            <UserSelect v-model="queryForm.createUserId" :multiple="false"/>
+                        </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="loadIteration">查询</el-button>
                         </el-form-item>
                     </el-form>
                 </el-col>
-                <el-col :span="12" style="text-align: right;">
+                <el-col :span="2" style="text-align: right;">
                     <el-button type="primary" @click="handleAddClick">新建迭代</el-button>
                 </el-col>
             </el-row>

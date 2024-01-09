@@ -8,7 +8,11 @@ import {useRouter} from 'vue-router'
 const router = useRouter()
 const queryForm = ref({
     iterationId: null,
+    requirementId: null,
+    ownerUserId: null,
     title: '',
+    smoke: null,
+    status: null,
     pageSize: 10,
     pageNum: 1
 })
@@ -114,23 +118,35 @@ function handleIterationChange() {
 <template>
     <div style="padding-top: 20px">
         <el-row>
-            <el-col :span="20">
+            <el-col :span="22">
                 <el-form :inline="true" v-model="queryForm">
                     <el-form-item label="迭代">
                         <IterationSelect v-model="queryForm.iterationId"/>
                     </el-form-item>
+                    <el-form-item label="需求">
+                        <IterationSelect v-model="queryForm.requirementId"/>
+                    </el-form-item>
                     <el-form-item label="标题">
                         <el-input v-model="queryForm.title"/>
                     </el-form-item>
-                    <el-form-item label="状态">
+                    <el-form-item label="冒烟">
+                        <el-select v-model="queryForm.smoke" :clearable="true" style="width: 70px">
+                            <el-option label="是" :value="true" />
+                            <el-option label="否" :value="false" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态" style="width:150px">
                         <DictSelect v-model="queryForm.status" dictType="testcase_status"/>
+                    </el-form-item>
+                    <el-form-item label="负责人">
+                        <UserSelect v-model="queryForm.ownerUserId" :multiple="false"/>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loadTestCase">查询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
-            <el-col :span="4" style="text-align: right">
+            <el-col :span="2" style="text-align: right">
                 <el-button type="primary" @click="handleAddClick">新建测试用例</el-button>
             </el-col>
         </el-row>
