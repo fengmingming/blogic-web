@@ -1,7 +1,21 @@
 import * as blogic from '../blogic'
 
 class User {
-    constructor(){}
+    constructor(arg){
+        this.id = arg.id
+        this.phone = arg.phone
+        this.name = arg.name
+        this.departemnts = arg.departemnts
+        this.roles = arg.roles
+        this.joinTime = arg.joinTime
+    }
+    static toUsers(arr) {
+        let objs = []
+        arr.forEach(it => {
+            objs.push(new User(it))
+        })
+        return objs
+    }
     static switchCompany(companyId) {
         let context = blogic.loadContext()
         return blogic.axios.put('/Users/'+context.user.userId+'/switchContext', {companyId})

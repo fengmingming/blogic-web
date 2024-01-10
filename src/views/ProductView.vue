@@ -118,7 +118,7 @@ onMounted(() => {
 <template>
     <MainContainer>
         <template #header>
-            <CompanyProductSelection :showProduct=false>
+            <CompanyProductSelection :showProduct="false">
             </CompanyProductSelection>
         </template>
         <template #default>
