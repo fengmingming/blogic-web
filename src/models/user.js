@@ -1,13 +1,14 @@
 import * as blogic from '../blogic'
 
 class User {
-    constructor(arg){
+    constructor(arg) {
         this.id = arg.id
         this.phone = arg.phone
         this.name = arg.name
         this.departemnts = arg.departemnts
         this.roles = arg.roles
         this.joinTime = arg.joinTime
+        this.admin = arg.admin
     }
     static toUsers(arr) {
         let objs = []

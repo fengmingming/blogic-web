@@ -53,9 +53,8 @@ onMounted(() => {
         if(res?.code == 0) {
             let datas = User.toUsers(res.data)
             datas.forEach(data => {
-                data.roleNames = data.roles?.map(role => role.role)
-                data.departmentNames = data.departmentNames?.map(department => department.departmentName)
-                data.admin = data.roles?.map(role => role.admin).filter(admin => admin == 1).length > 0
+                data.roleNames = data.roles.join(',')
+                data.departmentNames = data.departments.join(',')
             })
             users.value = datas
         }else {
