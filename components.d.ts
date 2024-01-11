@@ -49,6 +49,7 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElText: typeof import('element-plus/es')['ElText']
+    ElTree: typeof import('element-plus/es')['ElTree']
     IterationSelect: typeof import('./src/components/IterationSelect.vue')['default']
     MainContainer: typeof import('./src/components/MainContainer.vue')['default']
     RequirementSelect: typeof import('./src/components/RequirementSelect.vue')['default']
