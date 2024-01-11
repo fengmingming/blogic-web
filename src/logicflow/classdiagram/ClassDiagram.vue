@@ -24,7 +24,14 @@ export default {
     this.lf.openSelectionSelect()
     this.lf.register(ClassDiagram)
     lf.addMenuConfig({
-      
+      graphMenu: [{
+        
+          text: '分享',
+          callback() {
+            alert('分享成功！');
+          }
+        },
+      ],
     })
     this.lf.on('node:dbclick', showClassDefinition)
     this.lf.render()
