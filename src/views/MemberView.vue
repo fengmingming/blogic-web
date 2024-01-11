@@ -54,7 +54,7 @@ onMounted(() => {
             let datas = User.toUsers(res.data)
             datas.forEach(data => {
                 data.roleNames = data.roles.join(',')
-                data.departmentNames = data.departments.join(',')
+                data.departmentNames = data.departments?.join(',')
             })
             users.value = datas
         }else {
