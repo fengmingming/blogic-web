@@ -59,7 +59,7 @@ async function onSubmit() {
             }
             return;
         }else {
-            res?.showCodeDesc()
+            userRes?.showCodeDesc()
         }
         blogic.storeContext(new blogic.UserContext())
     }else {
@@ -74,7 +74,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-    <el-row :gutter="20">
+    <el-row :gutter="20" style="margin-top: 10%">
         <el-col :span="14" style="text-align: center;">
             <el-image :src="LogoPng"/>
         </el-col>
@@ -86,15 +86,21 @@ onUnmounted(() => {
                 <el-form-item label="密码">
                     <el-input v-model="loginData.password" type="password" show-password clearable/>
                 </el-form-item>
+                <el-form-item >
+                    <el-button type="primary" @click="onSubmit" style="width:100%">登录</el-button>
+                </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit">登录</el-button>
+                    <el-row style="width: 100%">
+                        <el-col :span="12" style="text-align: left">
+                            <el-link type="primary">忘记密码</el-link>
+                        </el-col>
+                        <el-col :span="12" style="text-align: right">
+                            <el-link type="primary" href="/signup">立即注册</el-link>
+                        </el-col>
+                    </el-row>
                 </el-form-item>
             </el-form>
         </el-col>
     </el-row>
 </template>
-<style scoped>
-.el-row {
-    margin-top: 10%
-}
-</style>
+

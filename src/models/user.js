@@ -5,7 +5,7 @@ class User {
         this.id = arg.id
         this.phone = arg.phone
         this.name = arg.name
-        this.departemnts = arg.departemnts
+        this.departments = arg.departments
         this.roles = arg.roles
         this.joinTime = arg.joinTime
         this.admin = arg.admin
@@ -35,6 +35,17 @@ class User {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId
         return blogic.axios.get(`/Users?companyId=${companyId}&iterationId=${iterationId}`)
+    }
+    static signUp(param) {
+        return blogic.axios.post('/Users', param)
+    }
+    static updateCompanyInfo(param) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let req = {}
+        req.departments = param.departmentIds
+        req.roles = param.roles
+        return blogic.axios.put(`/Companies/${companyId}/Users/${param.id}`, req)
     }
 }
 

@@ -38,7 +38,6 @@ export default {
   },
   methods: {
     showClassDefinition(d, data, position, msg) {
-      console.log('')  
     }
   }
 }

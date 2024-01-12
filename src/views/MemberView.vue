@@ -20,6 +20,24 @@
                             </template>
                         </el-table-column>
                     </el-table>
+                    <el-dialog  v-model="userDialog" :key="userDialogKey" width="30%">
+                        <el-form :model="user" ref="userRef" :rules="userRules">
+                            <el-form-item label="部门:" prop="departmentIds">
+                                <el-select v-model="user.departmentIds" :multiple="true" :clearable="true" :filterable="true" style="width:100%">
+                                    <el-option v-for="department in departments" :value="department.id" :key="department.id" :label="department.departmentName"/>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="角色:" prop="roles">
+                                <el-select v-model="user.roles" :multiple="true" style="width:100%">
+                                    <el-option v-for="role in roles" :value="role" :key="role" :label="role"/>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <el-button @click="handleSaveUserClick(false)">关闭</el-button>
+                            <el-button type="primary" @click="handleSaveUserClick(true)">保存</el-button>
+                        </template>
+                    </el-dialog>
                 </el-tab-pane>
                 <el-tab-pane label="部门" name="departments">
                     <el-row>
@@ -60,13 +78,70 @@ import {User} from '../models/user'
 import {Department} from '../models/department'
 // 人员
 const users = ref([])
-function removeUser(user) {//移除用户与公司的绑定关系，超级管理员无法移除
+const roles = ref(['ROLE_MANAGER','ROLE_PM','ROLE_DEVELOPER','ROLE_TESTER'])
+function loadUsers() {
+    User.findAll().then(res => {
+        if(res?.code == 0) {
+            let datas = User.toUsers(res.data)
+            datas.forEach(data => {
+                data.roleNames = data.roles.join(',')
+                data.departmentNames = data.departments?.map(d => d.departmentName).join(',')
+            })
+            users.value = datas
+        }else {
+            res?.showCodeDesc()
+        }
+    })
+}
+const user = ref({
+    departmentIds: null,
+    roles: null
+})
+const userRef = ref()
+const userRules = ref({
+    departmentIds: [{
+        required: true, message:'', trigger: 'blur'
+    }],
+    roles: [{
+        required: true, message:'', trigger: 'blur'
+    }]
+})
+const userDialog = ref(false)
+const userDialogKey = ref(0)
+function showUserDialog() {
+    userDialogKey.value++
+    userDialog.value = true
+}
+function hideUserDialog() {
+    userDialog.value = false
+}
+function removeUser(userData) {
 
 }
-function editUser(user) {
-    
+function editUser(userData) {
+    let {id, roles}  = userData
+    let departmentIds = userData.departments?.map(d => d.id)
+    user.value = {id, departmentIds, roles}
+    showUserDialog()
 }
-
+function handleSaveUserClick(submit) {
+    if(submit) {
+        userRef.value.validate((valid, fields) => {
+            if(valid) {
+                User.updateCompanyInfo(user.value).then(res => {
+                    if(res?.code == 0) {
+                        loadUsers()
+                        hideUserDialog()
+                    }else {
+                        res?.showCodeDesc()
+                    }
+                })
+            }
+        })
+    }else {
+        hideUserDialog()
+    }
+}
 // 部门
 const treeData = ref([])
 const defaultExpandedKeys = ref([])
@@ -77,11 +152,10 @@ const treeProps = {
 function loadTreeData() {
     Department.findAll().then(res => {
         if(res?.code == 0) {
-            departments.value = res.data
-            departmentSelectData.value = res.data
             defaultExpandedKeys.value = res.data?.map(d => d.id)
-            console.log(defaultExpandedKeys.value)
             treeData.value = Department.buildTree(res.data)
+            departments.value = Department.buildSelectData(treeData.value)
+            departmentSelectData.value = departments.value
         }else {
             res?.showCodeDesc()
         }
@@ -89,7 +163,19 @@ function loadTreeData() {
 }
 function handleTreeNodeClick(e, data) {
     department.value = {... data}
-    departmentSelectData.value = departments.value.filter(it => it.id != data.id)
+    let excludeIds = []
+    departmentSelectData.value = departments.value.filter(it => {
+        if(it.id == data.id) {
+            excludeIds.push(data.id)
+            return false
+        }
+        if(excludeIds.indexOf(it.parentId) >= 0) {
+            excludeIds.push(it.id)
+            return false
+        }else {
+            return true
+        }
+    })
     showDeptDialog()
 }
 function handleAddDepartmentClick() {
@@ -144,18 +230,7 @@ function handleSaveDeptClick(submit) {
 
 
 onMounted(() => {
-    User.findAll().then(res => {
-        if(res?.code == 0) {
-            let datas = User.toUsers(res.data)
-            datas.forEach(data => {
-                data.roleNames = data.roles.join(',')
-                data.departmentNames = data.departments?.join(',')
-            })
-            users.value = datas
-        }else {
-            res?.showCodeDesc()
-        }
-    })
+    loadUsers()
     loadTreeData()
 })
 </script>

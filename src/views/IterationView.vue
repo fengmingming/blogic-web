@@ -76,7 +76,6 @@ function handleAddClick() {
 function iterationSubmitClick(submit) {
     if(submit) {
         iterationFormRef.value.validate((valid, fields) => {
-            console.log(valid, fields)
             if(valid) {
                 let {id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds} = {... iterationForm.value}
                 Iteration.save({id, name, versionCode, status, scheduledStartTime, scheduledEndTime, userIds}).then(res => {

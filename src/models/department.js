@@ -7,6 +7,14 @@ class Department {
         this.parentId = arg.parentId
     }
 
+    static buildSelectData(trees) {
+        let arr = []
+        trees.forEach(node => {
+            assembleByDepthFirst(node, 0, arr)
+        })
+        return arr
+    }
+
     static buildTree(departments) {
         let objs = []
         let map = {}
@@ -40,6 +48,21 @@ class Department {
         }
     }
 
+}
+
+function assembleByDepthFirst(node, level, arr) {
+    let {id, departmentName, parentId} = node
+    let prefix = ''
+    for(let i = 0;i < level;i++) {
+        prefix = prefix + '+'
+    }
+    departmentName = prefix + departmentName
+    arr.push({id, departmentName, parentId})
+    if(node.children) {
+        node.children.forEach(c => {
+            assembleByDepthFirst(c, level + 1, arr)
+        })
+    }
 }
 
 function appendChildren(d, map) {
