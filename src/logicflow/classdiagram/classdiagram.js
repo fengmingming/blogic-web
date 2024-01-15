@@ -1,55 +1,52 @@
 import {HtmlNodeModel, HtmlNode} from '@logicflow/core'
+import { ElButton } from 'element-plus';
+import { defineComponent, h, render as vueRender } from 'vue';
+
+const classView = defineComponent({
+    name: 'ClassView',
+    components: {
+        'el-button': ElButton
+    },
+    props:['classData'],
+    template: `
+        
+    `,
+    data() {
+        return {}
+    },
+    setup(props) {
+        
+    },
+})
 
 class ClassNodeModel extends HtmlNodeModel {
 
     setAttributes() {
-        const props = this.properties || {}
-        const len = Object.keys(props)
         this.text.editable = false
-        const width = 100 + (len * 50)
-        const height = 130
-        this.width = width
-        this.height = height
-        this.anchorsOffset = [
-          [width / 2, 0],
-          [0, height / 2],
-          [-width / 2, 0],
-          [0, -height/2],
-        ]
+        this.height = 200
+        this.width = 200
     }
-    
+
 }
 
 class ClassNode extends HtmlNode {
 
     shouldUpdate() {
-        const { properties } = this.getAttributes()
-        if (this.currrentProperties && this.currrentProperties === JSON.stringify(properties)) return false
-        this.currrentProperties = JSON.stringify(properties)
-        return true
+        return !(this.currentProperties === this.preProperties)
     }
 
     setHtml(rootEl) {
-        const { properties } = this.getAttributes()
+        const properties  = JSON.parse(this.currentProperties)
         if (!this.shouldUpdate()) return
-        const el = document.createElement('div')
-        let javaClass = new JavaClass(properties.javaClass)
-        //包名
-        let packageHtml = _packageHtml(javaClass)
-        //类名
-        let classNameHtml = _classNameHtml(javaClass)
-        //属性
-        let fieldHtml = _fieldHtml(javaClass)
-        //方法
-        let methodHtml = _methodHtml(javaClass)
-        el.innerHTML = (packageHtml + classNameHtml + fieldHtml + methodHtml)
-        rootEl.innerHTML = ''
-        rootEl.appendChild(el)
+        let classData = new ClassModel(properties.classData)
+        classData.className = 'edd'
+        const vm = h(classView, {classData})
+        vueRender(vm, rootEl)
     }
 
 }
 
-class JavaClass {
+class ClassModel {
     
     constructor(arg) {
         this.packageName = arg.packageName
@@ -60,43 +57,6 @@ class JavaClass {
         this.methods = arg.methods
     }
 
-}
-
-function _packageHtml(javaClass) {
-    return `<div>包名: ${javaClass.package || ''}</div>`
-}
-
-function _classNameHtml(javaClass) {
-    return `<div>类名: ${javaClass.className}</div>`
-}
-
-function _fieldHtml(javaClass) {
-    let fields = javaClass.fields
-    let html = '<div>属性:</div>'
-    if(fields) {
-        html = html + fields.map(field => {
-            return `<div>  ${field.type} ${field.name}</div>`
-        }).join('')
-    }
-    return html
-}
-
-function _methodHtml(javaClass) {
-    let methods = javaClass.methods
-    let html = '<div>方法:</div>'
-    if(methods) {
-        html = html + methods.map(method => {
-            let args = ''
-            if(method.args) {
-                args = method.args.map(arg => {
-                    return `${simpleClassName(arg.type)} ${arg.name}`
-                }).join(',')
-                args = args.substring(0, args.length - 1)
-            }
-            return `<div>  ${method.name}(${args})</div>`
-        }).join('')
-    }
-    return html
 }
 
 function simpleClassName(arg) {
