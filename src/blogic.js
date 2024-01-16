@@ -126,6 +126,14 @@ function handleResponse(res) {
     throw res?res.codeDesc:InterruptOperation
 }
 
+function extractData(res, f) {
+    if(res?.code === 0) {
+        f(res.data)
+    }else{
+        res?.showCodeDesc()
+    }
+}
+
 function objToQuery(obj) {
     if(!obj) return ''
     return Object.keys(obj).map((key) => {
@@ -167,6 +175,7 @@ export {
     UserContext,
     showNotification,
     handleResponse,
+    extractData,
     objToQuery,
     getCurCompanyId,
     getCurProductId

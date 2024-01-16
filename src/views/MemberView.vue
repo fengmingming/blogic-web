@@ -75,9 +75,14 @@
                         <el-table-column prop="createTime" label="发起时间"/>
                         <el-table-column label="操作">
                             <template #="rowData">
-                                <el-popconfirm title="确定撤销?" @confirm="cancelInvitation(rowData.row.id)">
+                                <el-popconfirm title="确定撤销?" @confirm="cancelInvitation(rowData.row.id)" v-if="rowData.row.status == 10">
                                     <template #reference>
                                         <el-button type="primary" :text="true">撤销</el-button>
+                                    </template>
+                                </el-popconfirm>
+                                <el-popconfirm title="确定重新邀请?" @confirm="reInvite(rowData.row.id)" v-if="rowData.row.status == 96 || rowData.row.status == 95">
+                                    <template #reference>
+                                        <el-button type="primary" :text="true">重新邀请</el-button>
                                     </template>
                                 </el-popconfirm>
                             </template>
@@ -156,7 +161,7 @@ function hideUserDialog() {
     userDialog.value = false
 }
 function removeUser(userData) {
-
+    
 }
 function editUser(userData) {
     let {id, roles}  = userData
@@ -328,6 +333,7 @@ function invitationSubmit() {
             UserInvitation.save(userInvitationForm.value).then(res => {
                 if(res?.code == 0) {
                     blogic.showMessage("邀约成功，等待对方同意")
+                    loadUserInvitations()
                     hideInvitationDialog()
                 }else {
                     res?.showCodeDesc()
@@ -337,7 +343,19 @@ function invitationSubmit() {
     })
 }
 function cancelInvitation(userInvitationId) {
-    alert('撤销')
+    UserInvitation.cancel(userInvitationId).then(res => {
+        blogic.extractData(res, () => {
+            loadUserInvitations()
+        })
+    })
+}
+function reInvite(userInvitationId) {
+    UserInvitation.reInvite(userInvitationId).then(res => {
+        blogic.extractData(res, () => {
+            blogic.showMessage('邀约成功，等待对方同意')
+            loadUserInvitations()
+        })
+    })
 }
 onMounted(() => {
     loadUsers()

@@ -87,6 +87,24 @@ class UserInvitation {
         return blogic.axios.put(`/Users/${userId}/UserInvitations/${userInvitationId}?action=accept`)
     }
 
+    static reject(userInvitationId) {
+        let context = blogic.loadContext()
+        let userId = context.user.userId
+        return blogic.axios.put(`/Users/${userId}/UserInvitations/${userInvitationId}?action=reject`)
+    }
+
+    static cancel(userInvitationId) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.put(`/Companies/${companyId}/UserInvitations/${userInvitationId}?action=cancel`)
+    }
+
+    static reInvite(userInvitationId) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.put(`/Companies/${companyId}/UserInvitations/${userInvitationId}?action=reInvite`)
+    }
+
 }
 
 export {

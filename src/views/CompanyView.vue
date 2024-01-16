@@ -26,7 +26,13 @@ async function clickMe(company) {
 //我的邀请
 const invitations = ref([])
 function reject(userInvitationId) {
-
+    UserInvitation.reject(userInvitationId).then(res => {
+        if(res?.code == 0) {
+            loadMyInvitations()
+        }else {
+            res?.showCodeDesc()
+        }
+    })
 }
 function accept(userInvitationId) {
     UserInvitation.accept(userInvitationId).then(res => {
@@ -94,12 +100,12 @@ onMounted(() => {
                     <el-table-column prop="createTime" label="发起时间"/>
                     <el-table-column label="操作">
                         <template #="rowData">
-                            <el-popconfirm title="确定拒绝?" @confirm="reject(rowData.row.id)">
+                            <el-popconfirm title="确定拒绝?" @confirm="reject(rowData.row.id)" v-if="rowData.row.status == 10">
                                 <template #reference>
                                     <el-button :text="true">拒绝</el-button>
                                 </template>
                             </el-popconfirm>
-                            <el-popconfirm title="确定同意?" @confirm="accept(rowData.row.id)">
+                            <el-popconfirm title="确定同意?" @confirm="accept(rowData.row.id)" v-if="rowData.row.status == 10">
                                 <template #reference>
                                     <el-button type="primary" :text="true">同意</el-button>
                                 </template>
