@@ -1,10 +1,11 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import * as blogic from '../blogic'
 import CompanyPng from '../icons/company.png'
 import { useRouter } from 'vue-router'
-import {User} from '../models/user'
+import {User, UserInvitation} from '../models/user'
 import {Product} from '../models/product'
+import {Dict} from '../models/dict'
 
 const router = useRouter()
 const companies = ref(blogic.loadContext().companies)
@@ -22,6 +23,38 @@ async function clickMe(company) {
     blogic.storeContext(context)
     router.push('/home')
 }
+//我的邀请
+const invitations = ref([])
+function reject(userInvitationId) {
+
+}
+function accept(userInvitationId) {
+    UserInvitation.accept(userInvitationId).then(res => {
+        if(res?.code == 0) {
+            blogic.showMessage('加入成功，请重新登录')
+            loadMyInvitations()
+        }else {
+            res?.showCodeDesc()
+        }
+    })
+}
+async function loadMyInvitations() {
+    let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('userinvitation_status')))
+    UserInvitation.findMySelf().then(res => {
+        if(res?.code == 0) {
+            let datas = res.data
+            datas.forEach(d => {
+                d.statusName = statusDict[d.status]
+            })
+            invitations.value = datas
+        }else {
+            res?.showCodeDesc()
+        }
+    })
+}
+onMounted(() => {
+    loadMyInvitations()
+})
 </script>
 <template>
     <MainContainer :disableClick="disableClick" :disableClickMessage="disableClickMessage">
@@ -53,7 +86,27 @@ async function clickMe(company) {
                 </el-space>
             </el-tab-pane>
             <el-tab-pane label="我的邀请" name="myInvitations">
-                
+                <el-table :data="invitations" border style="width:100%;padding-top:10px">
+                    <el-table-column prop="companyName" label="公司"/>
+                    <el-table-column prop="departmentNames" label="部门" :formatter="(row) => row.departmentNames?.join(',')"/>
+                    <el-table-column prop="roles" label="角色" />
+                    <el-table-column prop="statusName" label="状态"/>
+                    <el-table-column prop="createTime" label="发起时间"/>
+                    <el-table-column label="操作">
+                        <template #="rowData">
+                            <el-popconfirm title="确定拒绝?" @confirm="reject(rowData.row.id)">
+                                <template #reference>
+                                    <el-button :text="true">拒绝</el-button>
+                                </template>
+                            </el-popconfirm>
+                            <el-popconfirm title="确定同意?" @confirm="accept(rowData.row.id)">
+                                <template #reference>
+                                    <el-button type="primary" :text="true">同意</el-button>
+                                </template>
+                            </el-popconfirm>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </el-tab-pane>
         </el-tabs>
     </MainContainer>

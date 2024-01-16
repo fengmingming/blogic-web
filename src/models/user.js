@@ -49,6 +49,46 @@ class User {
     }
 }
 
+class UserInvitation {
+    
+    constructor(arg) {
+        this.id = arg.id
+        this.companyId = arg.companyId
+        this.phone = arg.phone
+        this.userId = arg.userId
+        this.status = arg.status
+        this.roles = arg.roles
+        this.departments = arg.departments
+        this.departmentNames = arg.departmentNames
+        this.createTime = arg.createTime
+    }
+
+    static findAll() {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.get(`/Companies/${companyId}/UserInvitations`)
+    }
+
+    static findMySelf() {
+        let context = blogic.loadContext()
+        let userId = context.user.userId
+        return blogic.axios.get(`/Users/${userId}/UserInvitations`)
+    }
+
+    static save(param) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        return blogic.axios.post(`/Companies/${companyId}/UserInvitations`, param)
+    }
+
+    static accept(userInvitationId) {
+        let context = blogic.loadContext()
+        let userId = context.user.userId
+        return blogic.axios.put(`/Users/${userId}/UserInvitations/${userInvitationId}?action=accept`)
+    }
+
+}
+
 export {
-    User,
+    User,UserInvitation
 }
