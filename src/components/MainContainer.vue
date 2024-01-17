@@ -10,6 +10,7 @@ import StatisticsPng from '../icons/statistics.png'
 import UserPng from '../icons/user.png'
 import ProductPng from '../icons/product.png'
 import MemberPng from '../icons/users.png'
+import SelfPng from '../icons/self.png'
 import * as blogic from '../blogic'
 const props = defineProps({
     disableClick:{
@@ -47,35 +48,39 @@ if(!blogic.isLogin()) {
         <el-aside class="b_aside">
             <el-avatar shape="square" :size="35" :src="userIcon" @click="routerPush('/company')"/>
             <el-menu :collapse="true">
-                <el-menu-item index="1" @click="routerPush('/member')">
+                <el-menu-item index="1" @click="routerPush('/home')">
+                    <el-image :src="SelfPng"/>
+                    <template #title>我的</template>
+                </el-menu-item>
+                <el-menu-item index="2" @click="routerPush('/member')">
                     <el-image :src="MemberPng"/>
                     <template #title>人员</template>
                 </el-menu-item>
-                <el-menu-item index="2" @click="routerPush('/product')">
+                <el-menu-item index="3" @click="routerPush('/product')">
                     <el-image :src="ProductPng"/>
                     <template #title>项目</template>
                 </el-menu-item>
-                <el-menu-item index="3" @click="routerPush('/model')">
+                <el-menu-item index="4" @click="routerPush('/model')">
                     <el-image :src="ModelPng"/>
                     <template #title>模型</template>
                 </el-menu-item>
-                <el-menu-item index="4" @click="routerPush('/requirement')">
+                <el-menu-item index="5" @click="routerPush('/requirement')">
                     <el-image :src="RequirementPng"/>
                     <template #title>需求</template>
                 </el-menu-item>
-                <el-menu-item index="5" @click="routerPush('/iteration')">
+                <el-menu-item index="6" @click="routerPush('/iteration')">
                     <el-image :src="IterationsPng"/>
                     <template #title>迭代</template>
                 </el-menu-item>
-                <el-menu-item index="6" @click="routerPush('/task')">
+                <el-menu-item index="7" @click="routerPush('/task')">
                     <el-image :src="TaskPng"/>
                     <template #title>任务</template>
                 </el-menu-item>
-                <el-menu-item index="7" @click="routerPush('/defect')">
+                <el-menu-item index="8" @click="routerPush('/defect')">
                     <el-image :src="BugPng"/>
                     <template #title>缺陷</template>
                 </el-menu-item>
-                <el-menu-item index="8" @click="routerPush('/statistics')">
+                <el-menu-item index="9" @click="routerPush('/statistics')">
                     <el-image :src="StatisticsPng"/>
                     <template #title>统计</template>
                 </el-menu-item>

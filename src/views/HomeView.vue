@@ -6,6 +6,9 @@ const context = blogic.loadContext()
 </script>
 <template>
   <MainContainer>
+    <template #header>
+      <CompanyProductSelection/>
+    </template>
     <el-button>
       Home
     </el-button>

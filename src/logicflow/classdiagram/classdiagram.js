@@ -30,6 +30,7 @@ const classView = defineComponent({
     },
     setup(props) {
         const simpleClassName = (arg) => {
+            if(!arg) return ''
             let index = arg.lastIndexOf('.')
             if(index > 0) {
                 arg = arg.substring(index + 1)
@@ -78,8 +79,8 @@ class ClassModel {
     constructor(arg) {
         this.packageName = arg.packageName
         this.className = arg.className
-        this.parentClassName = arg.parentClassName
-        this.interfaces = arg.interfaces
+        this.parentClassNames = arg.parentClassNames
+        this.interfaceNames = arg.interfaceNames
         this.fields = arg.fields
         this.methods = arg.methods
     }

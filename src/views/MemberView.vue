@@ -70,7 +70,7 @@
                     <el-table :data="userInvitations" border style="width:100%;padding-top:10px">
                         <el-table-column prop="phone" label="手机号"/>
                         <el-table-column prop="departmentNames" label="部门" :formatter="(row) => row.departmentNames?.join(',')"/>
-                        <el-table-column prop="roles" label="角色" />
+                        <el-table-column prop="roles" label="角色" :formatter="(row) => row.departmentNames?.join(',')"/>
                         <el-table-column prop="statusName" label="状态"/>
                         <el-table-column prop="createTime" label="发起时间"/>
                         <el-table-column label="操作">
