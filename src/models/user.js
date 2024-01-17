@@ -21,6 +21,12 @@ class User {
         let context = blogic.loadContext()
         return blogic.axios.put('/Users/'+context.user.userId+'/switchContext', {companyId})
     }
+    static saveDefProduct(productId) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let userId = context.user.userId
+        return blogic.axios.put(`/Companies/${companyId}/Users/${userId}?action=setDefProduct`, {productId: productId})
+    }
     static findAll() {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId

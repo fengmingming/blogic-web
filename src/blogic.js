@@ -99,7 +99,7 @@ axiosInstance.interceptors.response.use(function(res) {
     if(res.status === 200) {
         res.data.showCodeDesc = function() {
             if(res.data.code > 0) {
-                showError('服务异常：' + res.data.codeDesc);
+                showError(res.data.codeDesc);
             }
         }
         if(res.data.code === 401) {
@@ -153,6 +153,11 @@ function getCurCompanyId() {
     return context.currentCompany.companyId
 }
 
+function existDefProductId() {
+    let context = loadContext()
+    return context.currentProduct?.productId 
+}
+
 function getCurProductId() {
     let context = loadContext()
     if(!context.currentProduct) {
@@ -178,6 +183,7 @@ export {
     extractData,
     objToQuery,
     getCurCompanyId,
+    existDefProductId,
     getCurProductId
 }
 

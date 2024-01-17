@@ -3,6 +3,7 @@ import {ref, onBeforeMount, onUnmounted} from 'vue'
 import {useRouter} from 'vue-router'
 import * as blogic from '../blogic'
 import LogoPng from '../icons/favicon.png'
+import {Product} from '../models/product'
 
 const loginData = ref({
     phone: '13788888998',
@@ -44,24 +45,38 @@ async function onSubmit() {
                 })
             })
             blogic.storeContext(context)
-            if(context.companies.length === 1) {
-                let company = context.companies[0]
-                let switchContextRes = await blogic.axios.put('/Users/'+context.user.userId+'/switchContext', {companyId: company.companyId})
-                if(switchContextRes?.code === 0) {
-                    context.currentCompany = company
-                    blogic.storeContext(context)
+            let company = userRes.data.companies.filter(it => it.def)[0]
+            let switchContextRes = await blogic.axios.put('/Users/'+context.user.userId+'/switchContext', {companyId: company.companyId})
+            if(switchContextRes?.code === 0) {
+                context.currentCompany = company
+                blogic.storeContext(context)
+                let proRes = await Product.findByCompanyId(context.currentCompany.companyId)
+                if(proRes?.code == 0) {
+                    let pros = proRes.data.records
+                    if(pros) {
+                        let pro;
+                        if(switchContextRes.data.defProductId) {
+                            pro = pros.filter(it => it.id === switchContextRes.data.defProductId)[0]
+                        }
+                        if(!pro) {
+                            pro = pros[0]
+                        }
+                        if(pro) {
+                            context.currentProduct = {productId: pro.id, productName: pro.productName}
+                            blogic.storeContext(context)
+                        }
+                    }
                 }else {
-                    switchContextRes?.showCodeDesc()
+                    proRes?.showCodeDesc()
                 }
-                router.push('/home')
             }else {
-                router.push('/company')
+                switchContextRes?.showCodeDesc()
             }
-            return;
+            router.push('/home')
         }else {
             userRes?.showCodeDesc()
+            blogic.storeContext(new blogic.UserContext())
         }
-        blogic.storeContext(new blogic.UserContext())
     }else {
         res?.showCodeDesc()
     }

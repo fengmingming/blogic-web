@@ -48,7 +48,7 @@ const signUpRules = ref({
     name: [{
         required: true, message: '', trigger: 'blur'
     }, {
-        max: 10, min: 1, message: '请输入姓名', trigger: 'blur'
+        max: 50, min: 1, message: '请输入姓名', trigger: 'blur'
     }],
     companyName: [{
         max: 200, message: '最多200个字', trigger: 'blur'
