@@ -188,8 +188,8 @@ function taskSubmitClick(submit) {
                     <el-table-column prop="updateTime" label="修改时间"/>
                     <el-table-column label="操作" fixed="right" width="200px">
                         <template #="rowData">
-                            <el-button @click="handleViewClick(rowData.row)">查看</el-button>
-                            <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
+                            <el-button @click="handleViewClick(rowData.row)" text>查看</el-button>
+                            <el-button @click="handleEditClick(rowData.row)" text v-if="blogic.verifyUserPermission(rowData.row.createUserId)">编辑</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
