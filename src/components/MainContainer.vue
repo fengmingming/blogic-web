@@ -24,6 +24,7 @@ const props = defineProps({
 })
 const userIcon = ref()
 const router = useRouter()
+const B = blogic
 function routerPush(path) {
     if(props.disableClick) {
         if(props.disableClickMessage) {
@@ -36,12 +37,8 @@ function routerPush(path) {
 function logout() {
     blogic.logout()
 }
-const productLineDisabled = ref(false)
 onMounted(() => {
     userIcon.value = UserPng
-    if(blogic.existDefProductId()) {
-        productLineDisabled.value = true
-    }
 })
 if(!blogic.isLogin()) {
     blogic.toLoginView()
@@ -56,31 +53,31 @@ if(!blogic.isLogin()) {
                     <el-image :src="SelfPng"/>
                     <template #title>我的</template>
                 </el-menu-item>
-                <el-menu-item index="2" @click="routerPush('/member')">
+                <el-menu-item index="2" @click="routerPush('/member')" v-if="B.hasRole('ROLE_MANAGER')">
                     <el-image :src="MemberPng"/>
                     <template #title>人员</template>
                 </el-menu-item>
-                <el-menu-item index="3" @click="routerPush('/product')">
+                <el-menu-item index="3" @click="routerPush('/product')" v-if="B.existDefProductId() || B.hasRole('ROLE_MANAGER', 'ROLE_PM')">
                     <el-image :src="ProductPng"/>
                     <template #title>项目</template>
                 </el-menu-item>
-                <el-menu-item index="4" @click="routerPush('/model')" v-if="productLineDisabled">
+                <el-menu-item index="4" @click="routerPush('/model')" v-if="B.existDefProductId()">
                     <el-image :src="ModelPng"/>
                     <template #title>模型</template>
                 </el-menu-item>
-                <el-menu-item index="5" @click="routerPush('/requirement')" v-if="productLineDisabled">
+                <el-menu-item index="5" @click="routerPush('/requirement')" v-if="B.existDefProductId()">
                     <el-image :src="RequirementPng"/>
                     <template #title>需求</template>
                 </el-menu-item>
-                <el-menu-item index="6" @click="routerPush('/iteration')" v-if="productLineDisabled">
+                <el-menu-item index="6" @click="routerPush('/iteration')" v-if="B.existDefProductId()">
                     <el-image :src="IterationsPng"/>
                     <template #title>迭代</template>
                 </el-menu-item>
-                <el-menu-item index="7" @click="routerPush('/task')" v-if="productLineDisabled">
+                <el-menu-item index="7" @click="routerPush('/task')" v-if="B.existDefProductId()">
                     <el-image :src="TaskPng"/>
                     <template #title>任务</template>
                 </el-menu-item>
-                <el-menu-item index="8" @click="routerPush('/defect')" v-if="productLineDisabled">
+                <el-menu-item index="8" @click="routerPush('/defect')" v-if="B.existDefProductId()">
                     <el-image :src="BugPng"/>
                     <template #title>缺陷</template>
                 </el-menu-item>

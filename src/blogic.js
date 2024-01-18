@@ -166,6 +166,22 @@ function getCurProductId() {
     return context.currentProduct.productId
 }
 
+function hasRoles(...roles) {
+    let context = loadContext()
+    let existRoles = context.currentCompany.roles
+    return (roles.filter(it => existRoles.includes(it)).length === roles.length)
+}
+
+function hasRole(...roles) {
+    let context = loadContext()
+    let existRoles = context.currentCompany.roles
+    return (roles.filter(it => existRoles.includes(it)).length > 0)
+}
+
+function verifyUserPermission(userId) {
+    return hasRole('ROLE_MANAGER') || (loadContext().user.userId === userId)
+}
+
 export {
     loadContext,
     storeContext,
@@ -184,7 +200,10 @@ export {
     objToQuery,
     getCurCompanyId,
     existDefProductId,
-    getCurProductId
+    getCurProductId,
+    hasRoles,
+    hasRole,
+    verifyUserPermission,
 }
 
 export const axios = axiosInstance

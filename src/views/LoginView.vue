@@ -6,7 +6,7 @@ import LogoPng from '../icons/favicon.png'
 import {Product} from '../models/product'
 
 const loginData = ref({
-    phone: '13788888998',
+    phone: '16610001001',
     password: '123456'
 })
 const router = useRouter()
