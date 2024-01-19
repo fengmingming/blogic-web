@@ -61,6 +61,12 @@ async function loadMyInvitations() {
 onMounted(() => {
     loadMyInvitations()
 })
+//基本信息
+const baseUserInfo = ref({
+    name: blogic.loadContext().user.userName,
+    phone: blogic.loadContext().user.phone
+})
+
 </script>
 <template>
     <MainContainer :disableClick="disableClick" :disableClickMessage="disableClickMessage">
@@ -113,6 +119,18 @@ onMounted(() => {
                         </template>
                     </el-table-column>
                 </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="基本信息" name="myBaseInfo">
+                <el-button>修改密码</el-button>
+                <el-form :model="baseUserInfo">
+                    <el-form-item label="手机号">
+                        <el-input v-model="baseUserInfo.phone"/>
+                    </el-form-item>
+                    <el-form-item label="姓名">
+                        <el-input v-model="baseUserInfo.userName"/>
+                    </el-form-item>
+                </el-form>
+                <el-button>保存</el-button>
             </el-tab-pane>
         </el-tabs>
     </MainContainer>

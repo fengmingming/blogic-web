@@ -42,6 +42,13 @@
                     {{ bug.currentUserName }}
                 </el-form-item>
             </el-form>
+            <el-affix position="bottom" :offset="100" style="width:100%;text-align:center">
+                <el-button-group>
+                    <el-button type="primary">确认</el-button>
+                    <el-button type="primary">指派</el-button>
+                    <el-button type="primary">解决</el-button>
+                </el-button-group>
+            </el-affix>
         </template>
     </MainContainer>
 </template>

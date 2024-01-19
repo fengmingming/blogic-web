@@ -39,6 +39,16 @@
                     <RichEditor v-model:content="task.taskDesc" :disabled="true" v-if="task.taskDesc"/>
                 </el-form-item>
             </el-form>
+            <el-affix position="bottom" :offset="100" style="width:100%;text-align:center">
+                <el-button-group>
+                    <el-button type="primary">子任务</el-button>
+                    <el-button type="primary">指派</el-button>
+                    <el-button type="primary">开始</el-button>
+                    <el-button type="primary">工时</el-button>
+                    <el-button type="primary">完成</el-button>
+                    <el-button type="primary">取消</el-button>
+                </el-button-group>
+            </el-affix>
         </template>
     </MainContainer>
 </template>
