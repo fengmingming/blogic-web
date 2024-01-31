@@ -67,6 +67,34 @@ class Bug {
         }
     }
 
+    static confirm(param) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let productId = context.currentProduct.productId
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs/${param.id}?action=confirmBug`, param)
+    }
+
+    static appoint(param) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let productId = context.currentProduct.productId
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs/${param.id}?action=appointBug`, param)
+    }
+
+    static close(param) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let productId = context.currentProduct.productId
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs/${param.id}?action=closeBug`, param)
+    }
+
+    static fix(param) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let productId = context.currentProduct.productId
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Bugs/${param.id}?action=fixBug`, param)
+    }
+
 }
 
 export {
