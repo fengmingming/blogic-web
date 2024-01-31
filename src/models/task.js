@@ -57,6 +57,48 @@ class Task {
         }
     }
 
+    static start(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=startTask`, param)
+    }
+
+    static appoint(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=appointTask`, param)
+    }
+
+    static complete(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=completeTask`, param)
+    }
+
+    static cancel(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=cancelTask`, param)
+    }
+
+    static pause(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=pauseTask`, param)
+    }
+
+    static resume(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=resumeTask`, param)
+    }
+
+    static recordDailyPapers(param) {
+        let companyId = blogic.getCurCompanyId()
+        let productId = blogic.getCurProductId()
+        return blogic.axios.put(`/Companies/${companyId}/Products/${productId}/Tasks/${param.id}?action=submitDailyPapers`, param)
+    }
+
 }
 
 export {

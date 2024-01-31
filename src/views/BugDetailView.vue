@@ -44,9 +44,10 @@
             </el-form>
             <el-affix position="bottom" :offset="50" style="width:100%;text-align:center">
                 <el-button-group>
-                    <el-button type="primary" @click="showConfirmDialog">确认</el-button>
-                    <el-button type="primary" @click="showAppointDialog">指派</el-button>
-                    <el-button type="primary">解决</el-button>
+                    <el-button type="primary" @click="showConfirmDialog" :disabled="!(bug.status == 10)">确认</el-button>
+                    <el-button type="primary" @click="showAppointDialog" :disabled="!(bug.status != 40)">指派</el-button>
+                    <el-button type="primary" @click="showfixDialog" :disabled="!(bug.status != 40)">解决</el-button>
+                    <el-button type="primary" @click="showCloseDialog" :disabled="!(bug.status != 40)">关闭</el-button>
                 </el-button-group>
             </el-affix>
         </template>
@@ -83,6 +84,40 @@
         <template #footer>
             <el-button @click="hideAppointDialog">取消</el-button>
             <el-button type="primary" @click="submitAppoint">保存</el-button>
+        </template>
+    </el-dialog>
+    <el-dialog v-model="fixDialog" :key="fixDialogKey" width="53%">
+        <el-form :model="fixForm" :rules="fixFormRule" label-width="100" ref="fixFormRef">
+            <el-form-item label="解决方案：" prop="fixSolution">
+                <DictSelect v-model="fixForm.fixSolution" dictType="bug_fix_solution"/>
+            </el-form-item>
+            <el-form-item label="解决版本：" prop="fixVersion">
+                <el-input v-model="fixForm.fixVersion" :maxlength="50" style="width: 215px"/>
+            </el-form-item>
+            <el-form-item label="解决日期：" prop="fixTime">
+                <el-date-picker v-model="fixForm.fixTime" type="datetime"/>
+            </el-form-item>
+            <el-form-item label="指派给：" prop="currentUserId">
+                <UserSelect v-model="fixForm.currentUserId" :productId="bug.productId" :iterationId="bug.iterationId" :multiple="false"/>
+            </el-form-item>
+            <el-form-item label="备注：" prop="remark">
+                <RichEditor :content="fixForm.remark"/>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button @click="hideFixDialog">取消</el-button>
+            <el-button type="primary" @click="submitFix">保存</el-button>
+        </template>
+    </el-dialog>
+    <el-dialog v-model="closeDialog" :key="closeDialogKey">
+        <el-form>
+            <el-form-item label="备注：">
+                <RichEditor :content="closeForm.remark"/>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button @click="hideCloseDialog">取消</el-button>
+            <el-button type="primary" @click="submitClose">保存</el-button>
         </template>
     </el-dialog>
 </template>
@@ -150,6 +185,7 @@ function submitConfirm() {
             Bug.confirm(param).then(res => {
                 if(res?.code === 0) {
                     blogic.showMessage('保存成功')
+                    reload()
                 }else {
                     res?.showCodeDesc()
                 }
@@ -187,10 +223,83 @@ function submitAppoint() {
             Bug.appoint(param).then(res => {
                 if(res?.code === 0) {
                     blogic.showMessage('保存成功')
+                    reload()
                 }else {
                     res?.showCodeDesc()
                 }
             })
+        }
+    })
+}
+//end
+//解决
+const fixDialog = ref(false)
+const fixDialogKey = ref(0)
+const fixForm = ref({})
+const fixFormRef = ref()
+const fixFormRule = ref({
+    fixSolution: [{
+        required: true, message:'', trigger: 'blur'
+    }],
+    fixVersion: [{
+        required: false, message:'', trigger: 'blur'
+    }],
+    fixTime: [{
+        required: true, message:'', trigger: 'blur'
+    }],
+    currentUserId: [{
+        required: true, message:'', trigger: 'blur'
+    }],
+    remark: [{
+        required: false, message:'', trigger: 'blur'
+    }]
+})
+function showfixDialog() {
+    let {id, fixSolution, fixVersion, currentUserId} = {...bug.value}
+    fixForm.value = {id, currentUserId, fixSolution, fixVersion}
+    fixDialogKey.value++
+    fixDialog.value = true
+}
+function hideFixDialog() {
+    fixDialog.value = false
+}
+function submitFix() {
+    fixFormRef.value.validate((valid, fields) => {
+        if(valid) {
+            let param = fixForm.value
+            Bug.fix(param).then(res => {
+                if(res?.code === 0) {
+                    blogic.showMessage('保存成功')
+                    reload()
+                }else {
+                    res?.showCodeDesc()
+                }
+            })
+        }
+    })
+}
+//end
+//关闭
+const closeDialog = ref(false)
+const closeDialogKey = ref(0)
+const closeForm = ref({})
+function showCloseDialog() {
+    let {id} = {...bug.value}
+    closeForm.value = {id}
+    closeDialogKey.value++
+    closeDialog.value = true
+}
+function hideCloseDialog() {
+    closeDialog.value = false
+}
+function submitClose() {
+    let param = fixForm.value
+    Bug.close(param).then(res => {
+        if(res?.code === 0) {
+            blogic.showMessage('保存成功')
+            reload()
+        }else {
+            res?.showCodeDesc()
         }
     })
 }

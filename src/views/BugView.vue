@@ -216,8 +216,8 @@ function bugSubmitClick(submit) {
         <el-table-column prop="createTime" label="创建时间"/>
         <el-table-column label="操作" fixed="right" width="200px">
             <template #="rowData">
-                <el-button @click="handleViewClick(rowData.row)">查看</el-button>
-                <el-button @click="handleEditClick(rowData.row)">编辑</el-button>
+                <el-button @click="handleViewClick(rowData.row)" text>查看</el-button>
+                <el-button @click="handleEditClick(rowData.row)" text>编辑</el-button>
             </template>
         </el-table-column>
     </el-table>
