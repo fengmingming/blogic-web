@@ -11,13 +11,13 @@
                 <el-form-item label="关联需求:" >
                     {{ task.requirementName }}
                 </el-form-item>
-                <el-form-item label="任务状态:">
+                <el-form-item label="任务状态:" >
                     <DictSelect v-model="task.status" dictType="task_status" :readOnly="true" v-if="task.status"/>
                 </el-form-item>
-                <el-form-item label="优先级:">
+                <el-form-item label="优先级:" >
                     <DictSelect v-model="task.priority" dictType="task_priority" :readOnly="true" v-if="task.priority"/>
                 </el-form-item>
-                <el-form-item label="进度:">
+                <el-form-item label="进度:" >
                     <el-col :span="1" style="text-align:right;padding-right: 15px;">
                         <span>预计</span>
                     </el-col>
@@ -41,7 +41,7 @@
             </el-form>
             <el-affix position="bottom" :offset="100" style="width:100%;text-align:center">
                 <el-button-group>
-                    <el-button type="primary">子任务</el-button>
+                    <el-button type="primary" @click="showAppointDialog">子任务</el-button>
                     <el-button type="primary">指派</el-button>
                     <el-button type="primary">开始</el-button>
                     <el-button type="primary">工时</el-button>
@@ -51,6 +51,23 @@
             </el-affix>
         </template>
     </MainContainer>
+    <el-dialog v-model="appointDialog" :key="appointDialogKey">
+        <el-form>
+            <el-form-item label="指派给：">
+                <UserSelect v-model="appointForm.currentUserId" :multiple="false" :productId="task.productId" :iterationId="task.iterationId"/>
+            </el-form-item>
+            <el-form-item label="消耗时间：">
+                <el-input v-model="appointForm.consumeTIme"/>
+            </el-form-item>
+            <el-form-item label="备注：">
+                <RichEditor :content="appointForm.remark"/>
+            </el-form-item>
+        </el-form>
+        <el-footer>
+            <el-button @click="hideAppointDialog">关闭</el-button>
+            <el-button @click="submitAppoint">确认</el-button>
+        </el-footer>
+    </el-dialog>
 </template>
 <script setup>
 import {ref, onMounted} from 'vue'
@@ -72,4 +89,20 @@ async function init() {
 onMounted(() => {
     init()
 })
+
+const appointDialog = ref(false)
+const appointDialogKey = ref(0)
+const appointForm = ref({})
+function showAppointDialog() {
+    appointForm.value = {}
+    appointDialogKey.value++
+    appointDialog.value = true
+}
+function hideAppointDialog() {
+    appointDialog.value = false
+}
+function submitAppoint() {
+
+}
+
 </script>
