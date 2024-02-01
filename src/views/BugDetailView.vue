@@ -95,7 +95,7 @@
                 <el-input v-model="fixForm.fixVersion" :maxlength="50" style="width: 215px"/>
             </el-form-item>
             <el-form-item label="解决日期：" prop="fixTime">
-                <el-date-picker v-model="fixForm.fixTime" type="datetime"/>
+                <el-date-picker v-model="fixForm.fixTime" type="datetime" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"/>
             </el-form-item>
             <el-form-item label="指派给：" prop="currentUserId">
                 <UserSelect v-model="fixForm.currentUserId" :productId="bug.productId" :iterationId="bug.iterationId" :multiple="false"/>

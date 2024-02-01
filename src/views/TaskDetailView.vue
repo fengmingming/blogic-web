@@ -44,22 +44,22 @@
                     <el-button type="primary">子任务</el-button>
                     <el-button type="primary" @click="showAppointDialog" :disabled="!(task.status != 95)">指派</el-button>
                     <el-button type="primary" @click="showStartDialog" :disabled="!(task.status == 10)">开始</el-button>
-                    <el-button type="primary" @click="showPauseDialog" :disabled="!(task.sttatus != 95 && task.status != 90)">暂停</el-button>
-                    <el-button type="primary" @click="showResumeDialog" v-if="task.status == 30">继续</el-button>
-                    <el-button type="primary" :disabled="!(task.status != 95 && task.status != 90)">工时</el-button>
+                    <el-button type="primary" @click="showPauseDialog" :disabled="!(task.status != 95 && task.status != 90 && task.status != 30)">暂停</el-button>
+                    <el-button type="primary" @click="showResumeDialog" :disabled="!(task.status == 30)">继续</el-button>
+                    <el-button type="primary" @click="showDpDialog" :disabled="!(task.status != 95 && task.status != 90)">工时</el-button>
                     <el-button type="primary" @click="showCompleteDialog" :disabled="!(task.status != 95)">完成</el-button>
-                    <el-button type="primary" @click="showCancelDialog" :disabled="!(task.status != 90)">取消</el-button>
+                    <el-button type="primary" @click="showCancelDialog" :disabled="!(task.status != 90 && task.status != 95)">取消</el-button>
                 </el-button-group>
             </el-affix>
         </template>
     </MainContainer>
     <el-dialog v-model="appointDialog" :key="appointDialogKey" width="53%">
-        <el-form :model="appointForm" :rules="appointFormRules" ref="appointFormRef" label-width="90px">
+        <el-form :model="appointForm" :rules="appointFormRules" ref="appointFormRef" label-width="100px">
             <el-form-item label="指派给：" prop="currentUserId">
                 <UserSelect v-model="appointForm.currentUserId" :multiple="false" :productId="task.productId" :iterationId="task.iterationId"/>
             </el-form-item>
             <el-form-item label="消耗时间：" prop="consumeTime">
-                <el-input-number v-model="appointForm.consumeTIme" :min="0"/>
+                <el-input-number v-model="appointForm.consumeTime" :min="0"/>
             </el-form-item>
             <el-form-item label="备注：" prop="remark">
                 <RichEditor :content="appointForm.remark"/>
@@ -76,7 +76,7 @@
                 <UserSelect v-model="startForm.currentUserId" :multiple="false" :productId="task.productId" :iterationId="task.iterationId"/>
             </el-form-item>
             <el-form-item label="开始时间：" prop="startTime">
-                <el-date-picker v-model="startForm.startTime" type="datetime"/>
+                <el-date-picker v-model="startForm.startTime" type="datetime" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"/>
             </el-form-item>
             <el-form-item label="进度:">
                 <el-form-item prop="overallTime" label="预计" label-width="70px">
@@ -129,15 +129,15 @@
         </template>
     </el-dialog>
     <el-dialog v-model="completeDialog" :key="completeDialogKey" width="53%">
-        <el-form :model="completeForm" :rules="completeFormRules" ref="completeFormRef" label-width="90px">
+        <el-form :model="completeForm" :rules="completeFormRules" ref="completeFormRef" label-width="100px">
             <el-form-item label="指派给：" prop="currentUserId">
                 <UserSelect v-model="completeForm.currentUserId" :multiple="false" :productId="task.productId" :iterationId="task.iterationId"/>
             </el-form-item>
-            <el-form-item prop="consumeTime" label="消耗" label-width="70px">
+            <el-form-item label="消耗：" prop="consumeTime">
                 <el-input-number v-model="completeForm.consumeTime" :min="0"/>
             </el-form-item>
-            <el-form-item label="完成时间：" prop="startTime">
-                <el-date-picker v-model="completeForm.completeTime" type="datetime"/>
+            <el-form-item label="完成时间：" prop="completeTime">
+                <el-date-picker v-model="completeForm.completeTime" type="datetime" format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"/>
             </el-form-item>
             <el-form-item label="备注：" prop="remark">
                 <RichEditor :content="completeForm.remark"/>
@@ -148,12 +148,56 @@
             <el-button @click="submitComplete" type="primary">保存</el-button>
         </template>
     </el-dialog>
+    <el-dialog v-model="dpDialog" :key="dpDialogKey" width="80%">
+        <el-form :model="dpForm" ref="dpFormRef">
+            <el-form-item>
+                <el-col :span="4">日期</el-col>
+                <el-col :span="3">消耗时间</el-col>
+                <el-col :span="3">剩余时间</el-col>
+                <el-col :span="12">备注</el-col>
+                <el-col :span="2"></el-col>
+            </el-form-item>
+            <el-form-item v-for="dp, index in dpForm.dps" prop="dps">
+                <el-col :span="4">
+                    <el-form-item :prop="`dps[${index}].date`" :rules="dpFormRules.date">
+                        <el-date-picker type="date" v-model="dp.date" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                    <el-form-item :prop="`dps[${index}].consumeTime`" :rules="dpFormRules.consumeTime">
+                        <el-input-number v-model="dp.consumeTime" :min="0"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                    <el-form-item :prop="`dps[${index}].remainTime`" :rules="dpFormRules.remainTime">
+                        <el-input-number v-model="dp.remainTime" :min="0"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-input type="textarea" v-model="dp.remark" :maxlength="255"/>
+                </el-col>
+                <el-col :span="2" style="padding-left:10px">
+                    <el-button @click="handleAddDpClick(index)">
+                        <el-icon><CirclePlus /></el-icon>
+                    </el-button>
+                    <el-button @click="handleDelDpClick(index)">
+                        <el-icon><Minus /></el-icon>
+                    </el-button>
+                </el-col>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button @click="hideDpDialog">关闭</el-button>
+            <el-button @click="submitDp" type="primary">保存</el-button>
+        </template>
+    </el-dialog>
 </template>
 <script setup>
 import {ref, onMounted, inject} from 'vue'
 import {useRouter} from 'vue-router'
 import {Task} from '../models/task'
 import * as blogic from '../blogic'
+import {CirclePlus, Minus} from '@element-plus/icons-vue'
 
 const reload = inject('reload')
 const params = useRouter().currentRoute.value.params
@@ -178,16 +222,18 @@ const appointForm = ref({})
 const appointFormRef = ref()
 const appointFormRules = ref({
     currentUserId:[{
-        required: true, message:'', trigger:'blur'
+        required: true, message:'', trigger: 'blur'
     }],
-    consumeTIme: [{
-        required: true, message:'', trigger:'blur', min:0
+    consumeTime: [{
+        required: true, message:'', trigger: 'blur'
+    }, {
+        type: 'number', min: 0, message: '', trigger: 'blur'
     }]
 })
 function showAppointDialog() {
     let {currentUserId, id} = {... task.value}
-    let consumeTIme = 0 
-    appointForm.value = {id, currentUserId, consumeTIme}
+    let consumeTime = 0 
+    appointForm.value = {id, currentUserId, consumeTime}
     appointDialogKey.value++
     appointDialog.value = true
 }
@@ -222,10 +268,10 @@ const startFormRules = ref({
         required: true, message:'', trigger:'blur'
     }],
     overallTime: [{
-        required: true, message:'', trigger:'blur', min:0
+        required: true, message:'', trigger:'blur', min:0, type: 'number'
     }],
-    consumeTIme: [{
-        required: true, message:'', trigger:'blur', min:0
+    consumeTime: [{
+        required: true, message:'', trigger:'blur', min:0, type: 'number'
     }]
 })
 function showStartDialog() {
@@ -336,8 +382,8 @@ const completeFormRules = ref({
     completeTime: [{
         required: true, message:'', trigger:'blur'
     }],
-    consumeTIme: [{
-        required: true, message:'', trigger:'blur', min:0
+    consumeTime: [{
+        required: true, message:'', trigger:'blur', min:0, type: 'number'
     }]
 })
 function showCompleteDialog() {
@@ -365,5 +411,53 @@ function submitComplete() {
     })
 }
 //end
-
+//daily paper
+const dpForm = ref({})
+const dpFormRef = ref()
+const dpFormRules = ref({
+    date: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    consumeTime: [{
+        required: true, message: '', trigger: 'blur'
+    }],
+    remainTime: [{
+        required: true, message: '', trigger: 'blur'
+    }]
+})
+const dpDialog = ref(false)
+const dpDialogKey = ref(0)
+function showDpDialog() {
+    dpForm.value.dps = [{date: '', consumeTime: 0, remainTime: 0, remark: ''}]
+    dpDialogKey.value++
+    dpDialog.value = true
+}
+function hideDpDialog() {
+    dpDialog.value = false
+}
+function submitDp() {
+    dpFormRef.value.validate((valid, fields) => {
+        console.log(valid, fields, dpForm.value.dps)
+        if(valid) {
+            let id = task.value.id
+            let dailyPapers = dpForm.value.dps
+            Task.recordDailyPapers({id, dailyPapers}).then(res => {
+                if(res?.code === 0) {
+                    blogic.showMessage('保存成功')
+                    reload()
+                }else {
+                    res?.showCodeDesc()
+                }
+            })
+        }
+    })
+}
+function handleAddDpClick(index) {
+    dpForm.value.dps.splice(index + 1, 0, {date: '', consumeTime: 0, remainTime: 0, remark: ''})
+}
+function handleDelDpClick(index) {
+    if(dpForm.value.length == 1) return
+    dpForm.value.dps.splice(index, 1)
+}
+//end
 </script>
