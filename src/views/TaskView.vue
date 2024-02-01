@@ -12,7 +12,7 @@ const dialogKey = ref(0)
 const queryForm = ref({
     pageSize:10,
     pageNum:1,
-    requirementId: null,
+    parentId:null,
     iterationId: null,
     taskName: '',
     currentUserId: null,
@@ -47,7 +47,8 @@ onMounted(() => {
     Dict.findByDictType('task_status').then(res => {
         if(res?.code == 0) {
             taskStatusDict.value = Dict.toMap(res.data)
-            loadTasks()
+            let query = router.currentRoute.value.query
+            queryForm.value.parentId = query.parentId
         }else {
             res?.showCodeDesc()
         }
@@ -148,11 +149,11 @@ function taskSubmitClick(submit) {
             <el-row>
                 <el-col :span="23">
                     <el-form :inline="true" v-model="queryForm">
+                        <el-form-item label="上级任务id">
+                            <el-input type="text" v-model="queryForm.parentId" :parser="(value) => value.replace(/\D/g, '')" :formatter="(value) => value.replace(/\D/g, '')"/>
+                        </el-form-item>
                         <el-form-item label="迭代">
                             <IterationSelect v-model="queryForm.iterationId" />
-                        </el-form-item>
-                        <el-form-item label="需求">
-                            <RequirementSelect v-model="queryForm.requirementId" />
                         </el-form-item>
                         <el-form-item label="名称">
                             <el-input v-model="queryForm.taskName"/>

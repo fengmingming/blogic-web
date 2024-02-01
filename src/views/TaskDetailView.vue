@@ -41,7 +41,7 @@
             </el-form>
             <el-affix position="bottom" :offset="50" style="width:100%;text-align:center">
                 <el-button-group>
-                    <el-button type="primary">子任务</el-button>
+                    <el-button type="primary" @click="handleSubTaskClick">子任务</el-button>
                     <el-button type="primary" @click="showAppointDialog" :disabled="!(task.status != 95)">指派</el-button>
                     <el-button type="primary" @click="showStartDialog" :disabled="!(task.status == 10)">开始</el-button>
                     <el-button type="primary" @click="showPauseDialog" :disabled="!(task.status != 95 && task.status != 90 && task.status != 30)">暂停</el-button>
@@ -200,7 +200,8 @@ import * as blogic from '../blogic'
 import {CirclePlus, Minus} from '@element-plus/icons-vue'
 
 const reload = inject('reload')
-const params = useRouter().currentRoute.value.params
+const router = useRouter()
+const params = router.currentRoute.value.params
 const task = ref({})
 
 async function init() {
@@ -458,6 +459,11 @@ function handleAddDpClick(index) {
 function handleDelDpClick(index) {
     if(dpForm.value.length == 1) return
     dpForm.value.dps.splice(index, 1)
+}
+//end
+//sub tasks 
+function handleSubTaskClick() {
+    router.push('/task?parentId=' + task.value.id)
 }
 //end
 </script>
