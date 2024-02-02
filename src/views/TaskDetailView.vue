@@ -1,44 +1,57 @@
 <template>
     <MainContainer>
         <template #default>
-            <el-form v-model="task" label-width="100px">
-                <el-form-item label="任务名称:">
-                    {{ task.taskName }}
-                </el-form-item>
-                <el-form-item label="所属迭代:" >
-                    {{ task.iterationName }}
-                </el-form-item>
-                <el-form-item label="关联需求:" >
-                    {{ task.requirementName }}
-                </el-form-item>
-                <el-form-item label="任务状态:" >
-                    <DictSelect v-model="task.status" dictType="task_status" :readOnly="true" v-if="task.status"/>
-                </el-form-item>
-                <el-form-item label="优先级:" >
-                    <DictSelect v-model="task.priority" dictType="task_priority" :readOnly="true" v-if="task.priority"/>
-                </el-form-item>
-                <el-form-item label="进度:" >
-                    <el-col :span="1" style="text-align:right;padding-right: 15px;">
-                        <span>预计</span>
-                    </el-col>
-                    <el-col :span="1">
-                        {{ task.overallTime }}
-                    </el-col>
-                    <el-col :span="1" style="text-align:right;padding-right: 15px;">
-                        <span>消耗</span>
-                    </el-col>
-                    <el-col :span="1">
-                        {{ task.consumeTime }}
-                    </el-col>
-                    <el-col :span="20"/>
-                </el-form-item>
-                <el-form-item label="指派给:">
-                    {{ task.currentUserName }}
-                </el-form-item>
-                <el-form-item label="任务描述:">
-                    <RichEditor v-model:content="task.taskDesc" :disabled="true" v-if="task.taskDesc"/>
-                </el-form-item>
-            </el-form>
+            <el-row>
+            <el-col :span="18">
+                <div>
+                    <div><el-text>[任务名称]</el-text></div>
+                    <div style="padding-top:10px">
+                        {{ task.taskName }}
+                    </div>
+                </div>
+                <div style="padding-top:10px">
+                    <div><el-text>[任务描述]</el-text></div>
+                    <div style="padding-top:10px">
+                        <RichEditor v-model:content="task.taskDesc" :disabled="true" v-if="task.taskDesc"/>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="6">
+                <el-form label-width="100px">
+                    <el-form-item label="所属迭代:" >
+                        {{ task.iterationName }}
+                    </el-form-item>
+                    <el-form-item label="关联需求:" >
+                        {{ task.requirementName }}
+                    </el-form-item>
+                    <el-form-item label="任务状态:" >
+                        <DictSelect v-model="task.status" dictType="task_status" :readOnly="true" v-if="task.status"/>
+                    </el-form-item>
+                    <el-form-item label="优先级:" >
+                        <DictSelect v-model="task.priority" dictType="task_priority" :readOnly="true" v-if="task.priority"/>
+                    </el-form-item>
+                    <el-form-item label="进度:" >
+                        <el-col :span="6" style="text-align:right;padding-right: 15px;">
+                            <span>预计</span>
+                        </el-col>
+                        <el-col :span="6">
+                            {{ task.overallTime }}
+                        </el-col>
+                        <el-col :span="6" style="text-align:right;padding-right: 15px;">
+                            <span>消耗</span>
+                        </el-col>
+                        <el-col :span="6">
+                            {{ task.consumeTime }}
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="指派给:">
+                        {{ task.currentUserName }}
+                    </el-form-item>
+                </el-form>
+            </el-col>
+            </el-row>
+            <el-divider />
+            <ChangeRecord :keyType="12" :primaryKey="params.id"/>
             <el-affix position="bottom" :offset="50" style="width:100%;text-align:center">
                 <el-button-group>
                     <el-button type="primary" @click="handleSubTaskClick">子任务</el-button>
@@ -400,7 +413,9 @@ function hideCompleteDialog() {
 function submitComplete() {
     completeFormRef.value.validate((valid, fields) => {
         if(valid) {
-            Task.complete(completeForm.value).then(res => {
+            let param = {... completeForm.value}
+            param.completeUserId = blogic.getCurUser().userId
+            Task.complete(param).then(res => {
                 if(res?.code === 0) {
                     blogic.showMessage('保存成功')
                     reload()

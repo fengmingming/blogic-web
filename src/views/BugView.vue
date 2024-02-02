@@ -163,8 +163,8 @@ function bugSubmitClick(submit) {
         <el-row>
             <el-col :span="22">
                 <el-form :inline="true" v-model="queryForm">
-                    <el-form-item label="ID" style="width: 150px">
-                        <el-input type="number" v-model="queryForm.id" :min="0"/>
+                    <el-form-item label="测试ID" style="width: 150px">
+                        <el-input type="text" v-model="queryForm.id" :formatter="value => value.replace(/\D/g, '')" :parser="value => value.replace(/\D/g, '')"/>
                     </el-form-item>
                     <el-form-item label="迭代">
                         <IterationSelect v-model="queryForm.iterationId"/>

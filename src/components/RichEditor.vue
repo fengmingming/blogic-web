@@ -1,6 +1,6 @@
 <script setup>
 import {ref, onMounted} from 'vue'
-import Editor from 'ckeditor5-custom'
+import * as Editor from 'ckeditor5-custom'
 import 'ckeditor5-custom/build/translations/zh.js'
 
 const props = defineProps({
@@ -109,3 +109,6 @@ onMounted(() => {
 <template>
     <ckeditor :editor="editor" v-model="editorContent" :config="editorConfig" @blur="blurFun" :disabled="disabled" />
 </template>
+<style scoped>
+
+</style>

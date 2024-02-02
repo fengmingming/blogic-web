@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ChangeRecord: typeof import('./src/components/ChangeRecord.vue')['default']
     CompanyProductSelection: typeof import('./src/components/CompanyProductSelection.vue')['default']
     DictSelect: typeof import('./src/components/DictSelect.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
@@ -21,10 +22,10 @@ declare module 'vue' {
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
-    ElFooter: typeof import('element-plus/es')['ElFooter']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElHeader: typeof import('element-plus/es')['ElHeader']
@@ -57,6 +58,7 @@ declare module 'vue' {
     MainContainer: typeof import('./src/components/MainContainer.vue')['default']
     RequirementSelect: typeof import('./src/components/RequirementSelect.vue')['default']
     RichEditor: typeof import('./src/components/RichEditor.vue')['default']
+    RichKindEditor: typeof import('./src/components/RichKindEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Steps: typeof import('./src/components/Steps.vue')['default']

@@ -166,6 +166,11 @@ function getCurProductId() {
     return context.currentProduct.productId
 }
 
+function getCurUser() {
+    let context = loadContext()
+    return context.user
+}
+
 function hasRoles(...roles) {
     let context = loadContext()
     let existRoles = context.currentCompany.roles
@@ -204,6 +209,7 @@ export {
     hasRoles,
     hasRole,
     verifyUserPermission,
+    getCurUser,
 }
 
 export const axios = axiosInstance

@@ -49,6 +49,7 @@ onMounted(() => {
             taskStatusDict.value = Dict.toMap(res.data)
             let query = router.currentRoute.value.query
             queryForm.value.parentId = query.parentId
+            loadTasks()
         }else {
             res?.showCodeDesc()
         }
