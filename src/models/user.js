@@ -53,6 +53,14 @@ class User {
         req.roles = param.roles
         return blogic.axios.put(`/Companies/${companyId}/Users/${param.id}`, req)
     }
+    static updateBaseInfo(param) {
+        let userId = blogic.getCurUser().userId
+        return blogic.axios.put(`/Users/${userId}`, param);
+    }
+    static updatePass(param) {
+        let userId = blogic.getCurUser().userId
+        return blogic.axios.put(`/Users/${userId}?action=updatePassword`, param);
+    }
 }
 
 class UserInvitation {

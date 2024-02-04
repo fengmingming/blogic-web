@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, inject} from 'vue'
 import * as blogic from '../blogic'
 import CompanyPng from '../icons/company.png'
 import { useRouter } from 'vue-router'
@@ -7,6 +7,7 @@ import {User, UserInvitation} from '../models/user'
 import {Product} from '../models/product'
 import {Dict} from '../models/dict'
 
+const reload = inject('reload')
 const router = useRouter()
 const companies = ref(blogic.loadContext().companies)
 const disableClick = ref(true)
@@ -66,6 +67,83 @@ const baseUserInfo = ref({
     name: blogic.loadContext().user.userName,
     phone: blogic.loadContext().user.phone
 })
+const baseUserInfoRef = ref()
+const baseUserInfoRules = ref({
+    name: [{
+        required: true, message: '', trigger: 'blur',
+    }, {
+        max: 20, message: '最多20个字符', trigger: 'blur'
+    }],
+    phone: [{
+        required: true, message: '', trigger: 'blur'
+    }, {
+        min: 11, max: 11, message: '手机号格式不正确', trigger: 'blur'
+    }]
+})
+
+function saveBaseUser() {
+    baseUserInfoRef.value.validate((valid, fields) => {
+        if(valid) {
+            let param = {... baseUserInfo.value}
+            User.updateBaseInfo(param).then(res => {
+                if(res?.code === 0) {
+                    let context = blogic.loadContext()
+                    context.user.userName = param.name
+                    context.user.phone = param.phone
+                    blogic.storeContext(context)
+                    blogic.showMessage("保存成功")
+                    reload()
+                }else {
+                    res?.showCodeDesc()
+                }
+            })
+        }
+    })
+}
+
+const passForm = ref({})
+const passFormRef = ref()
+const passFormRules = ref({
+    newPassword: [{
+        required: true, message:'', trigger: 'blur'
+    }, {
+        max: 20, message: '密码最多20个字符', trigger: 'blur'
+    }],
+    oldPassword: [{
+        required: true, message:'', trigger: 'blur'
+    }, {
+        max: 20, message: '密码最多20个字符', trigger: 'blur'
+    }]
+})
+const passDialog = ref(false)
+const passDialogKey = ref(0)
+function showPassDialog() {
+    passForm.value = {}
+    passDialogKey.value++
+    passDialog.value = true
+}
+function hidePassDialog() {
+    passDialog.value = false
+}
+function updatePassword() {
+    passFormRef.value.validate((valid, fields) => {
+        if(valid) {
+            let param = {... passForm.value}
+            if(param.oldPassword === param.newPassword) {
+                blogic.showMessage("新旧密码不能一样")
+                return
+            }
+            User.updatePass().then(res => {
+                if(res?.code === 0) {
+                    hidePassDialog()
+                    blogic.showMessage("保存成功")
+                }else {
+                    res?.showCodeDesc()
+                }
+            })
+        }
+    })
+}
 
 </script>
 <template>
@@ -121,17 +199,38 @@ const baseUserInfo = ref({
                 </el-table>
             </el-tab-pane>
             <el-tab-pane label="基本信息" name="myBaseInfo">
-                <el-button>修改密码</el-button>
-                <el-form :model="baseUserInfo">
-                    <el-form-item label="手机号">
-                        <el-input v-model="baseUserInfo.phone"/>
+                <el-row>
+                    <el-col :span="20"></el-col>
+                    <el-col :span="4" style="text-align: right">
+                        <el-button @click="showPassDialog">修改密码</el-button>
+                    </el-col>
+                </el-row>
+                <el-form :model="baseUserInfo" label-width="100px" ref="baseUserInfoRef" :rules="baseUserInfoRules">
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="baseUserInfo.phone" style="width: 500px;"/>
                     </el-form-item>
-                    <el-form-item label="姓名">
-                        <el-input v-model="baseUserInfo.userName"/>
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="baseUserInfo.name" style="width: 500px;"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button @click="saveBaseUser">保存</el-button>
                     </el-form-item>
                 </el-form>
-                <el-button>保存</el-button>
             </el-tab-pane>
         </el-tabs>
     </MainContainer>
+    <el-dialog v-model="passDialog" :key="passDialogKey" width="20%">
+        <el-form :model="passForm" ref="passFormRef" :rules="passFormRules">
+            <el-form-item label="旧密码" prop="oldPassword">
+                <el-input v-model="passForm.oldPassword" type="password" show-password clearable/>
+            </el-form-item>
+            <el-form-item label="新密码" prop="newPassword">
+                <el-input v-model="passForm.newPassword" type="password" show-password clearable/>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <el-button @click="hidePassDialog">取消</el-button>
+            <el-button @click="updatePassword">保存</el-button>
+        </template>
+    </el-dialog>
 </template>
