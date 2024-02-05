@@ -8,11 +8,11 @@
             <el-tabs :modelValue="'members'">
                 <el-tab-pane label="人员" name="members">
                     <el-table :data="users" border style="width:100%">
-                        <el-table-column prop="phone" label="手机号" />
-                        <el-table-column prop="name" label="姓名" />
-                        <el-table-column prop="departmentNames" label="部门" />
+                        <el-table-column prop="phone" label="手机号" width="150px"/>
+                        <el-table-column prop="name" label="姓名" width="100px"/>
+                        <el-table-column prop="departmentNames" label="部门" width="150px"/>
                         <el-table-column prop="roleNames" label="角色" />
-                        <el-table-column prop="joinTime" label="加入时间" />
+                        <el-table-column prop="joinTime" label="加入时间" width="200px"/>
                         <el-table-column label="操作" fixed="right" width="200px">
                             <template #="rowData">
                                 <el-button @click="editUser(rowData.row)">编辑</el-button>

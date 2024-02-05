@@ -1,5 +1,8 @@
 <template>
     <MainContainer>
+        <template #header>
+            <el-button type="primary" :icon="Back" circle @click="router.back()" color="#ecf5ff"/>
+        </template>
         <template #default>
             <el-form v-model="product" :key="flushKey">
                 <el-form-item label="产品名称:">
@@ -19,6 +22,7 @@
 import {Product} from '../models/product'
 import {ref, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
+import {Back} from '@element-plus/icons-vue'
 
 const router = useRouter()
 const params = router.currentRoute.value.params

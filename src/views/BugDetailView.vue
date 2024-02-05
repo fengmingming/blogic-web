@@ -1,5 +1,8 @@
 <template>
     <MainContainer>
+        <template #header>
+            <el-button type="primary" :icon="Back" circle @click="router.back()" color="#ecf5ff"/>
+        </template>
         <template #default>
             <el-row>
                 <el-col :span="18">
@@ -152,9 +155,11 @@ import {ref, onMounted, inject} from 'vue'
 import {useRouter} from 'vue-router'
 import {Bug} from '../models/bug'
 import * as blogic from '../blogic'
+import {Back} from '@element-plus/icons-vue'
 
 const reload = inject('reload')
-const params = useRouter().currentRoute.value.params
+const router = useRouter()
+const params = router.currentRoute.value.params
 const bug = ref({
     id: params.id
 })

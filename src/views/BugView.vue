@@ -204,16 +204,16 @@ function bugSubmitClick(submit) {
         </el-row>
     </div>
     <el-table :data="bugs" border style="width:100%">
-        <el-table-column prop="id" label="ID"/>
-        <el-table-column prop="severity" label="级别"/>
-        <el-table-column prop="priority" label="优先级"/>
+        <el-table-column prop="id" label="ID" width="100px"/>
+        <el-table-column prop="severity" label="级别" width="50px"/>
+        <el-table-column prop="priority" label="优先级" width="50px"/>
         <el-table-column prop="title" label="Bug标题"/>
-        <el-table-column prop="statusName" label="状态"/>
-        <el-table-column prop="currentUserName" label="指派给"/>
-        <el-table-column prop="fixUserName" label="解决人"/>
-        <el-table-column prop="fixSolutionName" label="解决方案"/>
-        <el-table-column prop="createUserName" label="创建人"/>
-        <el-table-column prop="createTime" label="创建时间"/>
+        <el-table-column prop="statusName" label="状态" width="100px"/>
+        <el-table-column prop="currentUserName" label="指派给" width="150px"/>
+        <el-table-column prop="fixUserName" label="解决人" width="150px"/>
+        <el-table-column prop="fixSolutionName" label="解决方案" width="150px"/>
+        <el-table-column prop="createUserName" label="创建人" width="150px"/>
+        <el-table-column prop="createTime" label="创建时间" width="200px"/>
         <el-table-column label="操作" fixed="right" width="200px">
             <template #="rowData">
                 <el-button @click="handleViewClick(rowData.row)" text>查看</el-button>

@@ -1,5 +1,8 @@
 <template>
     <MainContainer>
+        <template #header>
+            <el-button type="primary" :icon="Back" circle @click="router.back()" color="#ecf5ff"/>
+        </template>
         <template #default>
             <el-form v-model="requirement">
                 <el-form-item label="需求名称:">
@@ -27,6 +30,7 @@ import * as blogic from '../blogic'
 import {Requirement} from '../models/requirement'
 import {Dict} from '../models/dict'
 import {useRouter} from 'vue-router'
+import {Back} from '@element-plus/icons-vue'
 
 const params = useRouter().currentRoute.value.params
 const requirement = ref({})

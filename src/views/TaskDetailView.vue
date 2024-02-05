@@ -1,5 +1,8 @@
 <template>
     <MainContainer>
+        <template #header>
+            <el-button type="primary" :icon="Back" circle @click="router.back()" color="#ecf5ff"/>
+        </template>
         <template #default>
             <el-row>
             <el-col :span="18">
@@ -211,6 +214,7 @@ import {useRouter} from 'vue-router'
 import {Task} from '../models/task'
 import * as blogic from '../blogic'
 import {CirclePlus, Minus} from '@element-plus/icons-vue'
+import {Back} from '@element-plus/icons-vue'
 
 const reload = inject('reload')
 const router = useRouter()

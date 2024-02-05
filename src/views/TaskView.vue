@@ -150,8 +150,8 @@ function taskSubmitClick(submit) {
             <el-row>
                 <el-col :span="23">
                     <el-form :inline="true" v-model="queryForm">
-                        <el-form-item label="上级任务id">
-                            <el-input type="text" v-model="queryForm.parentId" :parser="(value) => value.replace(/\D/g, '')" :formatter="(value) => value.replace(/\D/g, '')"/>
+                        <el-form-item label="上级任务id" >
+                            <el-input type="text" v-model="queryForm.parentId" :parser="(value) => value.replace(/\D/g, '')" :formatter="(value) => value.replace(/\D/g, '')" style="width: 100px"/>
                         </el-form-item>
                         <el-form-item label="迭代">
                             <IterationSelect v-model="queryForm.iterationId" />
@@ -162,10 +162,10 @@ function taskSubmitClick(submit) {
                         <el-form-item label="状态" style="width: 150px">
                             <DictSelect v-model="queryForm.status" dictType="task_status"/>
                         </el-form-item>
-                        <el-form-item label="处理人">
-                            <UserSelect v-model="queryForm.currentUserId" :productId="productId" :multiple="false"/>
+                        <el-form-item label="处理人" style="width: 150px">
+                            <UserSelect v-model="queryForm.currentUserId" :productId="productId" :multiple="false" />
                         </el-form-item>
-                        <el-form-item label="完成人">
+                        <el-form-item label="完成人" style="width: 150px">
                             <UserSelect v-model="queryForm.completeUserId" :productId="productId" :multiple="false"/>
                         </el-form-item>
                         <el-form-item>
@@ -179,6 +179,7 @@ function taskSubmitClick(submit) {
             </el-row>
             <div style="padding-top: 20px">
                 <el-table :data="tasks" border style="width: 100%">
+                    <el-table-column prop="id" label="任务id" width="100px"/>
                     <el-table-column prop="iterationName" label="迭代名称"/>
                     <el-table-column prop="requirementName" label="关联需求"/>
                     <el-table-column prop="taskName" label="任务名称"/>

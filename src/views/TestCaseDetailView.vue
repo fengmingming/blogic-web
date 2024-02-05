@@ -1,5 +1,8 @@
 <template>
     <MainContainer>
+        <template #header>
+            <el-button type="primary" :icon="Back" circle @click="router.back()" color="#ecf5ff"/>
+        </template>
         <template #default>
             <el-form v-model="testCase" :key="flushKey" label-width="100px">
                 <el-form-item label="所属迭代:">
@@ -37,6 +40,7 @@
 import {ref, onMounted} from 'vue'
 import {TestCase} from '../models/testcase'
 import {useRouter} from 'vue-router'
+import {Back} from '@element-plus/icons-vue'
 
 const params = useRouter().currentRoute.value.params
 const testCase = ref({steps:[]})

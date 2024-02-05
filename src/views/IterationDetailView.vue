@@ -1,5 +1,8 @@
 <template>
     <MainContainer>
+        <template #header>
+            <el-button type="primary" :icon="Back" circle @click="router.back()" color="#ecf5ff"/>
+        </template>
         <template #default>
             <el-form :model="iteration" :key="flushKey">
                 <el-form-item label="迭代名称:">
@@ -15,7 +18,7 @@
                     {{ iteration.scheduledStartTime }} <span v-if="iteration.scheduledEndTime">到</span> {{ iteration.scheduledEndTime }}
                 </el-form-item>
                 <el-form-item label="迭代参与者:">
-                    <el-text v-for="user in iteration.users">{{ user.name }}</el-text>
+                    <el-text v-for="user in iteration.users">{{ user.name }}，</el-text>
                 </el-form-item>
             </el-form>
         </template>
@@ -27,6 +30,7 @@ import * as blogic from '../blogic'
 import {useRouter} from 'vue-router'
 import {Iteration} from '../models/iteration'
 import {Dict} from '../models/dict'
+import {Back} from '@element-plus/icons-vue'
 
 const params = useRouter().currentRoute.value.params
 const iteration = ref({})

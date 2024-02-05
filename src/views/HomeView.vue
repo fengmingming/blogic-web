@@ -1,19 +1,19 @@
 <script setup>
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
-import * as blogic from '../blogic'
-const router = useRouter()
-const context = blogic.loadContext()
-const content = ref('helloworld')
+import HomeMyView from './HomeMyView.vue'
+import HomeOwnerView from './HomeOwnerView.vue'
 </script>
 <template>
   <MainContainer>
     <template #header>
-      <CompanyProductSelection/>
+      <CompanyProductSelection :showProduct="false"/>
     </template>
-    <el-button>
-      Home
-    </el-button>
-    <RichKindEditor />
+    <el-tabs type="border-card">
+      <el-tab-pane label="我负责的">
+        <HomeOwnerView />
+      </el-tab-pane>
+      <el-tab-pane label="我创建的">
+        <HomeMyView />
+      </el-tab-pane>
+    </el-tabs>
   </MainContainer>
 </template>
