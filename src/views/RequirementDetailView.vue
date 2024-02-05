@@ -32,7 +32,8 @@ import {Dict} from '../models/dict'
 import {useRouter} from 'vue-router'
 import {Back} from '@element-plus/icons-vue'
 
-const params = useRouter().currentRoute.value.params
+const router = useRouter()
+const params = router.currentRoute.value.params
 const requirement = ref({})
 async function init() {
     let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('requirement_status')))

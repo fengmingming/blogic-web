@@ -1,21 +1,21 @@
 <template>
     <div style="width: 100%;text-align: center;" >
         <el-row v-for="step in steps" style="background-color: #FAFAFA;" align="middle" justify="center">
-            <el-col :span="2">
+            <el-col :span="2" style="padding: 5px">
                 {{ step.number }}
             </el-col>
-            <el-col :span="10">
+            <el-col :span="10" style="padding: 5px">
                 <el-text v-if="readOnly === true">{{ step.step }}</el-text>
                 <el-input v-if="readOnly === false" type="textarea" v-model="step.step" @blur="handleBlurFun" :disabled="disabled"/>
             </el-col>
-            <el-col :span="2">
+            <el-col :span="2" style="padding: 5px">
                 期望结果
             </el-col>
-            <el-col :span="9">
+            <el-col :span="9" style="padding: 5px">
                 <el-text v-if="readOnly === true">{{ step.expectedResult }}</el-text>
                 <el-input v-if="readOnly === false" type="textarea" v-model="step.expectedResult" @blur="handleBlurFun" :disabled="disabled"/> 
             </el-col>
-            <el-col :span="1">
+            <el-col :span="1" style="padding: 5px">
                 <el-dropdown v-if="!disabled && !readOnly">
                     <el-icon :size="20"><CirclePlus/></el-icon>
                     <template #dropdown>

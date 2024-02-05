@@ -179,14 +179,14 @@ function handleIterationChange() {
         <el-table-column prop="iterationName" label="所属迭代"/>
         <el-table-column prop="requirementName" label="关联需求"/>
         <el-table-column prop="title" label="用例标题"/>
-        <el-table-column prop="priority" label="优先级"/>
-        <el-table-column prop="ownerUserName" label="负责人"/>
-        <el-table-column prop="smoke" label="是否冒烟" :formatter="(row, column, cellValue, index) => cellValue?'是':'否'"/>
-        <el-table-column prop="status" label="状态"/>
-        <el-table-column prop="createUserName" label="创建人"/>
-        <el-table-column prop="createTime" label="创建时间"/>
-        <el-table-column prop="updateTime" label="修改时间"/>
-        <el-table-column label="操作" fixed="right" width="200px">
+        <el-table-column prop="priority" label="优先级" width="100px"/>
+        <el-table-column prop="ownerUserName" label="负责人" width="100px"/>
+        <el-table-column prop="smoke" label="是否冒烟" :formatter="(row, column, cellValue, index) => cellValue?'是':'否'" width="100px"/>
+        <el-table-column prop="status" label="状态" width="100px"/>
+        <el-table-column prop="createUserName" label="创建人" width="100px"/>
+        <el-table-column prop="createTime" label="创建时间" width="170px"/>
+        <el-table-column prop="updateTime" label="修改时间" width="170px"/>
+        <el-table-column label="操作" fixed="right" width="160px">
             <template #=rowData>
                 <el-button @click="handleViewClick(rowData.row)" text>查看</el-button>
                 <el-button @click="handleEditClick(rowData.row)" text v-if="blogic.verifyUserPermission(rowData.row.createUserId)">编辑</el-button>

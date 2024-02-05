@@ -20,7 +20,7 @@
                 <el-form-item label="前置条件:">
                     <RichEditor v-model:content="testCase.precondition" :disabled="true" v-if="testCase.precondition"/>
                 </el-form-item>
-                <el-form-item label="用例步骤:">
+                <el-form-item label="用例步骤:" >
                     <Steps v-model="testCase.steps" :readOnly="true" v-if="testCase.steps.length > 0"/>
                 </el-form-item>
                 <el-form-item label="用例负责人:">
@@ -42,7 +42,8 @@ import {TestCase} from '../models/testcase'
 import {useRouter} from 'vue-router'
 import {Back} from '@element-plus/icons-vue'
 
-const params = useRouter().currentRoute.value.params
+const router = useRouter()
+const params = router.currentRoute.value.params
 const testCase = ref({steps:[]})
 const flushKey = ref(0)
 function flush() {

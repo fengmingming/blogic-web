@@ -32,7 +32,8 @@ import {Iteration} from '../models/iteration'
 import {Dict} from '../models/dict'
 import {Back} from '@element-plus/icons-vue'
 
-const params = useRouter().currentRoute.value.params
+const router = useRouter()
+const params = router.currentRoute.value.params
 const iteration = ref({})
 const flushKey = ref(0)
 function flush(){
