@@ -32,6 +32,13 @@ class TestCase {
         return objs
     }
 
+    static findMyList(query) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let queryStr = blogic.objToQuery(query)
+        return blogic.axios.get(`/Companies/${companyId}/Products/TestCases?${queryStr}`)
+    }
+
     static findList(query) {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId

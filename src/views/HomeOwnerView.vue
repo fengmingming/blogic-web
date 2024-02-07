@@ -84,7 +84,7 @@ const taskTotal = ref(0)
 const tasks = ref([])
 async function loadTask() {
     let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('task_status')))
-    let res = await Task.findList({currentUserId: userId, pageSize: pageSize.value, pageNum: pageNum.value})
+    let res = await Task.findMyList({currentUserId: userId, pageSize: pageSize.value, pageNum: pageNum.value})
     if(res?.code == 0) {
         taskTotal.value = res.data.total
         let objs = Task.toTask(res.data.records)
@@ -101,7 +101,7 @@ const bugs = ref([])
 const bugTotal = ref(0)
 async function loadBug() {
     let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('bug_status')))
-    let res = await Bug.findList({currentUserId: userId, pageSize: pageSize.value, pageNum: pageNum.value})
+    let res = await Bug.findMyList({currentUserId: userId, pageSize: pageSize.value, pageNum: pageNum.value})
     if(res?.code == 0) {
         let datas = Bug.toBug(res.data.records)
         datas.forEach(data => {
@@ -118,7 +118,7 @@ const testcaseTotal = ref(0)
 const testcases = ref([])
 async function loadTestCase() {
     let statusDict = Dict.toMap(blogic.handleResponse(await Dict.findByDictType('testcase_status')))
-    let res = await TestCase.findList({ownerUserId: userId, pageSize: pageSize.value, pageNum: pageNum.value})
+    let res = await TestCase.findMyList({currentUserId: userId, pageSize: pageSize.value, pageNum: pageNum.value})
     if(res?.code == 0) {
         res.data.records.forEach(it => {
             it.status = statusDict[it.status]

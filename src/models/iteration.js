@@ -24,6 +24,13 @@ class Iteration {
         return objs
     }
 
+    static findMyList(params) {
+        let context = blogic.loadContext()
+        let companyId = context.currentCompany.companyId
+        let query = blogic.objToQuery(params)
+        return blogic.axios.get(`/Companies/${companyId}/Products/Iteration?${query}`)
+    }
+
     static findList(params) {
         let context = blogic.loadContext()
         let companyId = context.currentCompany.companyId

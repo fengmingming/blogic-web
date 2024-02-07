@@ -34,6 +34,12 @@ class Task {
         return objs
     }
 
+    static findMyList(params) {
+        let companyId = blogic.getCurCompanyId()
+        let query = blogic.objToQuery(params)
+        return blogic.axios.get(`/Companies/${companyId}/Products/Tasks?${query}`)
+    }
+
     static findList(params) {
         let companyId = blogic.getCurCompanyId()
         let productId = blogic.getCurProductId()
