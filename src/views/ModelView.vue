@@ -7,7 +7,7 @@ import ClassDiagram from '@/logicflow/classdiagram/ClassDiagram.vue'
           <CompanyProductSelection />
         </template>
         <template #default>
-          <ClassDiagram />
+          <ClassDiagram model-id="100"/>
         </template>
     </MainContainer>
 </template>

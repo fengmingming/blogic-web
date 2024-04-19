@@ -2,8 +2,8 @@ import { HtmlResize } from "@logicflow/extension"
 import { ElButton,ElInput,ElTag,ElCard } from 'element-plus'
 import { defineComponent, h, render as vueRender } from 'vue'
 
-const classView = defineComponent({
-    name: 'ClassView',
+const commentView = defineComponent({
+    name: 'CommentView',
     components: {
         'el-button': ElButton,
         'el-input': ElInput,
@@ -13,10 +13,8 @@ const classView = defineComponent({
     props:['modelValue'],
     template: `
         <div>
-            <el-tag type="info">class</el-tag>
-            <el-input v-model="className" placeholder="class name"/>
-            <el-input type="textarea" v-model="fields" placeholder="+fieldName:type" :autosize="{ minRows: 2}"/>
-            <el-input type="textarea" v-model="methods" placeholder="+methodName(arg:type,...):type" :autosize="{ minRows: 2}"/>
+            <el-tag type="info">note</el-tag>
+            <el-input type="textarea" v-model="content" :autosize="{ minRows: 10}" input-style="background-color: rgb(240, 240, 200)"/>
         </div>
     `,
     data() {
@@ -27,12 +25,12 @@ const classView = defineComponent({
     },
 })
 
-class ClassNodeModel extends HtmlResize.model {
+class CommentNodeModel extends HtmlResize.model {
 
     initNodeData(data) {
         super.initNodeData(data);
-        this.height = 165
-        this.width = 265
+        this.height = 250
+        this.width = 165
     }
 
     setAttributes() {
@@ -42,7 +40,7 @@ class ClassNodeModel extends HtmlResize.model {
 
 }
 
-class ClassNode extends HtmlResize.view {
+class CommentNode extends HtmlResize.view {
 
     shouldUpdate() {
         return !(this.currentProperties === this.preProperties)
@@ -52,14 +50,14 @@ class ClassNode extends HtmlResize.view {
         const properties  = JSON.parse(this.currentProperties)
         if (!this.shouldUpdate()) return
         let modelValue = properties.data
-        const vm = h(classView, {modelValue})
+        const vm = h(commentView, {modelValue})
         vueRender(vm, rootEl)
     }
 
 }
 
 export default {
-    type: 'classdiagram',
-    view: ClassNode,
-    model: ClassNodeModel
+    type: 'commentdiagram',
+    view: CommentNode,
+    model: CommentNodeModel
 }

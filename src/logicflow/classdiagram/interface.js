@@ -2,8 +2,8 @@ import { HtmlResize } from "@logicflow/extension"
 import { ElButton,ElInput,ElTag,ElCard } from 'element-plus'
 import { defineComponent, h, render as vueRender } from 'vue'
 
-const classView = defineComponent({
-    name: 'ClassView',
+const interfaceView = defineComponent({
+    name: 'InterfaceView',
     components: {
         'el-button': ElButton,
         'el-input': ElInput,
@@ -13,9 +13,8 @@ const classView = defineComponent({
     props:['modelValue'],
     template: `
         <div>
-            <el-tag type="info">class</el-tag>
-            <el-input v-model="className" placeholder="class name"/>
-            <el-input type="textarea" v-model="fields" placeholder="+fieldName:type" :autosize="{ minRows: 2}"/>
+            <el-tag type="info">interface</el-tag>
+            <el-input v-model="interfaceName" placeholder="interface name"/>
             <el-input type="textarea" v-model="methods" placeholder="+methodName(arg:type,...):type" :autosize="{ minRows: 2}"/>
         </div>
     `,
@@ -27,11 +26,11 @@ const classView = defineComponent({
     },
 })
 
-class ClassNodeModel extends HtmlResize.model {
+class InterfaceNodeModel extends HtmlResize.model {
 
     initNodeData(data) {
         super.initNodeData(data);
-        this.height = 165
+        this.height = 115
         this.width = 265
     }
 
@@ -42,7 +41,7 @@ class ClassNodeModel extends HtmlResize.model {
 
 }
 
-class ClassNode extends HtmlResize.view {
+class InterfaceNode extends HtmlResize.view {
 
     shouldUpdate() {
         return !(this.currentProperties === this.preProperties)
@@ -52,14 +51,14 @@ class ClassNode extends HtmlResize.view {
         const properties  = JSON.parse(this.currentProperties)
         if (!this.shouldUpdate()) return
         let modelValue = properties.data
-        const vm = h(classView, {modelValue})
+        const vm = h(interfaceView, {modelValue})
         vueRender(vm, rootEl)
     }
 
 }
 
 export default {
-    type: 'classdiagram',
-    view: ClassNode,
-    model: ClassNodeModel
+    type: 'interfacediagram',
+    view: InterfaceNode,
+    model: InterfaceNodeModel
 }

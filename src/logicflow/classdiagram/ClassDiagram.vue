@@ -1,100 +1,126 @@
 <script>
 import { LogicFlow } from '@logicflow/core'
-import { Control, Menu, DndPanel, SelectionSelect } from '@logicflow/extension'
+import { Control, Menu, DndPanel, SelectionSelect} from '@logicflow/extension'
 import "@logicflow/core/dist/style/index.css"
 import '@logicflow/extension/lib/style/index.css'
 import ClassDiagram from './classdiagram.js'
+import PkgDiagram from './package.js'
+import InterfaceDiagram from './interface.js'
+import CommentDiagram from './comment.js'
+import EnumDiagram from './enum.js'
 import {Model} from '../../models/model.js'
 import * as blogic from '../../blogic'
 
 export default {
-  props: ['id', 'modelId'],
+  props: ['modelId'],
   data() {
     return {
-      dialog: false,
-      dialogKey: 0,
       modelName: '',
-      data: {nodes:[], edges: []},
-      classForm: {
-        nodeId: null,
-        interfaceNames: [],
-        parentClassNames: [],
-        className: '',
-        packageName: '',
-        fields:[],
-        methods:[]
-      },
-      classFormRules: {
-        packageName: [{
-          
-        }]
-      }
+      data: {nodes:[], edges: []}
     }
   },
   mounted() {
-    _this = this
-    Model.findOne(this.props.modelId).then(res => {
-      _this.modelName = res.data.name
-      LogicFlow.use(Control)
-      LogicFlow.use(Menu)
-      LogicFlow.use(DndPanel)
-      LogicFlow.use(SelectionSelect)
-      _this.lf = new LogicFlow({
-        container: this.$refs.container,
-        grid: true,
-        height: 800
-      });
-      const _lf = _this.lf
-      _this.lf.openSelectionSelect()
-      _this.lf.register(ClassDiagram)
-      _this.lf.setMenuConfig({
-        graphMenu: [],
-        nodeMenu:[{
-          text: '编辑',
-          callback: function(node) {
-            _this.showClassDefinition({data: {properties: node.properties}})
-          }
-        }, {
-          text: '删除',
-          callback: function(node) {
-            _lf.deleteNode(node.id)
-          }
-        }]
-      })
-      _this.lf.setPatternItems([{
-        type: 'classdiagram',
-        label: '类图',
-        properties: {
-          classData: {
-            interfaceNames: [],
-            parentClassName: [],
-            className: '类名',
-            packageName: '',
-            fields:[],
-            methods:[]
-        }},
-        icon: 'data:image/png;base64,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'
-      }])
-      _this.lf.on('node:dbclick', this.showClassDefinition)
-      _this.lf.render(res.data.data)
+    let _this = this
+    LogicFlow.use(Control)
+    LogicFlow.use(Menu)
+    LogicFlow.use(DndPanel)
+    LogicFlow.use(SelectionSelect)
+    _this.lf = new LogicFlow({
+      container: this.$refs.container,
+      grid: true,
+      height: 800,
+      stopScrollGraph: true,
+      stopZoomGraph: true,
+      allowRotation: true
+    });
+    let _lf = _this.lf
+    _this.lf.openSelectionSelect()
+    _this.lf.register(ClassDiagram)
+    _this.lf.register(PkgDiagram)
+    _this.lf.register(InterfaceDiagram)
+    _this.lf.register(EnumDiagram)
+    _this.lf.register(CommentDiagram)
+    _this.lf.setMenuConfig({
+      graphMenu: [],
+      nodeMenu:[{
+        text: '删除',
+        callback: function(node) {
+          _lf.deleteNode(node.id)
+        }
+      }]
     })
+    _this.lf.setPatternItems([{
+      type: 'packagediagram',
+      label: 'package',
+      properties: {
+        data: {
+          packageName: null
+      }},
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAaCAYAAADfcP5FAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEwSURBVEhLY/wPBAyDCDBB6UED4CHU3NHDICYqwvD/H5UCjJGB4c/vPwx8/HwMcVHhUEEiAMhBIDBlxhwoi7pgKonmwqMMyIayqAsiwoIY1qzfCOURBnAHsTAzQ1nUBUKCggxPn72A8ggDeBoqKq9h8PP2YPj58ydYglqAg4ODYdHSFQwxwHT06+cvoAgiJkAsJkZGBjcXJ4gAEMAd1Nk7kSEzLYnh+/fvYAlqApCjfvwAeRQ1WTACHfMD6MhNW7Yz5GSkQARBDgIBWiVqYsCkabOgLDokamIAKKRgYNAVjKMOIgRGHUQIjDqIEBh1ECEw6iBCYJA4CFGPwh00kJXrb2DbGwbg7aHZ8xcx/PnzB9g2R9S8NAdAq75++8bg6mjPoKerAxGCOWiwgEGWqBkYABEgdRHxIQdtAAAAAElFTkSuQmCC'
+    },{
+      type: 'classdiagram',
+      label: 'class',
+      properties: {
+        data: {
+          className: null,
+          fields:[],
+          methods:[]
+      }},
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAZCAYAAABZ5IzrAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAD5SURBVEhLY/wPBAyDCDBB6UEDwCH0/sMHhqkz5jLw8/My0Du8/v79y6CirMTg6+UOEQA5qLt/MogaMIBsPzjKWFlZwY4bKMCGZD/YQYxg5uAAgy5RDwoHsbCyQFnQXDZ73kKG7z9+QoXoC1iBjjl/4RLDrKkTIAIgB02cMgNEDRiYOnMOlAXNZQMN/vz+A2WNJmrCYNRB2MBoticERrM9KWDUQYQA2EH//v8DcwYKMDIhwgWc7RcvW8mgqqrMICQgwPDvH30b1ezsbAyz5y9iaGusBfPh3aATp84w/Pnzh4GRkb7txz/ARr65iREDBwcHmA930OAADAwAAkb7Ax8Q5ZsAAAAASUVORK5CYII='
+    },{
+      type: 'interfacediagram',
+      label: 'interface',
+      properties: {
+        data: {
+          interfaceName: null,
+          methods:[],
+          staticFields: []
+      }},
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAUCAYAAADlep81AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEBSURBVEhLY/wPBAyDCMAdNHn6LAZmZmawID3B79+/GUwMDRisrSwgAiAH/f7z5//8xUtBzAEBvROnQln//zOBHMUIxiByYAArKwuUxcAAdtAAugUDQBw0iMCogwiBwesgNnY2KIv+gJkJUf7BC8aIuGQGF0d7hl/AgoqeAFQYP37ylKGlvhoiAHLQn79//i9btQbEHBAwdcYcKAtaMILAr5+/oCz6g7///kJZo7mMMIA4CJSsB0n1AQ0hRoZfv+ibu5DB9+8/oCykbL981VqGt+/eMzAx0TeoQAHh6ebMoK6mCuYPuhYjRYn658+fDD+AGAQuXb7KcObcBTCbfMDAAAA+y131rfvv5gAAAABJRU5ErkJggg=='
+    },{
+      type: 'enumdiagram',
+      label: 'enum',
+      properties: {
+        data: {
+          className: null,
+          fields:[]
+      }},
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAUCAYAAADlep81AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEBSURBVEhLY/wPBAyDCMAdNHn6LAZmZmawID3B79+/GUwMDRisrSwgAiAH/f7z5//8xUtBzAEBvROnQln//zOBHMUIxiByYAArKwuUxcAAdtAAugUDQBw0iMCogwiBwesgNnY2KIv+gJkJUf7BC8aIuGQGF0d7hl/AgoqeAFQYP37ylKGlvhoiAHLQn79//i9btQbEHBAwdcYcKAtaMILAr5+/oCz6g7///kJZo7mMMIA4CJSsB0n1AQ0hRoZfv+ibu5DB9+8/oCykbL981VqGt+/eMzAx0TeoQAHh6ebMoK6mCuYPuhYjRYn658+fDD+AGAQuXb7KcObcBTCbfMDAAAA+y131rfvv5gAAAABJRU5ErkJggg=='
+    },{
+      type: 'commentdiagram',
+      label: 'comment',
+      properties: {
+        data: {
+          content: null
+      }},
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAZCAYAAABZ5IzrAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAFVSURBVEhLY/wPBAyDCDBB6UEDUELoPxDu2XeQ4e/fv1AR6oF/f/8xWFmaMQjw80NFsAOUEHr06AnDqrUbGPj5+BjY2diohjk4OBi4ubkYBCUVGe7eewC1DQcAhRAM3H/w8P/MuQugPOqDnolT/iekZv0/f/ESVAQTYKShP7//QFnUBb9+/Wb48OEjw/xZUxlaOnoZLly6DJVBBXRL1EDPMzAyQthrli1gmDxtNsPFy1cgAkiAbg5iZ2djePrsBUNmXjFDVn4Jg6ioCENKZj5UFglAYg4CQGlo6ow5UB7tQXZBCZSFAANaDv3Gkl4H1EHYwKiDCIFRBxECow4iBEYdRAgMfgexsLJAWbQHTEyY4YHShH346DFDS2cvQ1JcNMOPHz+gorQBXFxcDA0tHQzbN66GikAAapsayNyznzZtanQAsktYSIjBzMQIKgIBo90g/ICBAQB0QHiXkZQ1/QAAAABJRU5ErkJggg=='
+    },{
+      type: 'line',
+      label: '直线',
+      callback: () => {
+        _this.lf.setDefaultEdgeType('line')
+      },
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAfCAYAAACPvW/2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEjSURBVFhH7de9DoIwEMDxw5mFJ9BZX0VFwA+i9eV4PRYSEBWHysUbiFoE2qsO/hdznX6xrbGOrIMfakSfP9MflGUZCCFoes0aKE1TiKIIPM8D3/dp9U14qG00m07x8kjXdWnlfda+oXkYw2QyhiRJaEURwVgLdkeZ5wVN7bGDHpicps+xgvpiMDZQsBOdt6kZC2i1FbIoTjT1yzgIt2koBjMKCuPut0mVMZDONjUzAvI3B3kqS5r00gYhpizPNOmnBVqu90Yx2GAQYs6XC03mGgRa1dvEgcF6g/B3xvQ2NesFCuqrzYnBOoO4zsxznUCLMJbXqqKJt4+g+p+erCxhsFbQA3OjyU5KEJ4Z2xhM+ZTGZcdxaLKX8tXxDQz2f0q3B3AHPQuprgo8UuwAAAAASUVORK5CYII='
+    },{
+      type: 'bezier',
+      label: '曲线',
+      callback: () => {
+        _this.lf.setDefaultEdgeType('bezier')
+      },
+      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAcCAYAAAAJKR1YAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAKQSURBVFhH7ZbPS2JRFMe/FUWWWmgEhtGicCXu2rd36a6NC3fRMnCr/RURMzAt/TOMdmJJUf5CIYmMEtHnz0q9887lzJg+dSZ9NC7mA493znn3Pc65950fEMzj46N4eXlhTcvl5SVLWtLptKjX66z18vr6KhKJBGtaYrEYS0KUylUxQwKmhLJSwyzLU8N/h/7EP3Noa2sLR0dHrDEzM/idZV/F29ubvO/s7FAyycvr9Yqbmxs1U5vdLHt4eMDCwgLW19dJ1RCJRLC7u8taL8lkEpubm1haWmILEI/HcX5+jnA4jFQqhefnZxgMBqysrMBqteLi4gLVapVXA263G9++/9B3h+7u7sTe3p5QgxL7+/vi5ORE3N7eCkVReEUXp9Mpd8fv97NFCKVSF7o5dHBwII8hm82yZTSnp6csddGtMB4fHyOTyeDs7Iwt40GFUReHLBYLisUia+MzcaUOhUIIBALY3t5my+RM5BAdUzAYRK1WY4sO0JER+XxeFAoF1rR87Mr9GI1GlrRQt1fLAmtarq+vWer7qfmmFku1Wg6g0+lgdnbwhjocDllrhjHq3Y/Pev4hcmSYM8SwDxLqLMTSYEa92/9s+Mq/RD1m2O121iZn4rSfn59HLpeDzWZjy/iMnfbqyAqfz4fFxUUp6+HMLwbu0Pv7OxqNBiqVCtQ5G+pMjGg0iqurK9k0XS4XDg8PZUPUE1mp1egERdpqtTA3N4fl5WXZtakzU1c2m81QGyFMJhM8Hg/W1tb49S5PT0+yWtO00A99lzr9xsYGW3q5v7+XsxHxqdbRbDblEQ2CxggKgALqh9KaCicFNIhSqYTV1VUpf8qhr6Cs1CdPez1pd1rTtUPtdnu6HCKm6sgA4Ce2entoy7taogAAAABJRU5ErkJggg=='
+    }])
+    if(this.modelId) {
+      Model.findOne(this.modelId).then(res => {
+        _this.modelName = res.data.name  
+        _this.lf.render(res.data.data)
+      })
+    }else {
+      _this.lf.render(this.data)
+    }
   },
   methods: {
-    showClassDefinition(event) {
-      let data = event.data
-      let classData = {... data.properties.classData}
-      classData.nodeId = data.id
-      if(classData.fields.length == 0) {
-        classData.fields.push({})
-      }
-      if(classData.methods.length == 0) {
-        classData.methods.push({})
-      }
-      this.classForm = classData
-      this.showDialog()
-    },
     saveFun() {
-      let param = {id: this.props.modelId, name: this.modelName, data: this.lf.getGraphRawData()}
+      let param = {id: this.modelId, name: this.modelName, data: this.lf.getGraphRawData()}
       Model.save(param).then(res => {
         if(res?.code == 0) {
           blogic.showMessage('已保存')
@@ -102,153 +128,18 @@ export default {
           res?.showCodeDesc()
         }
       })
-    },
-    showDialog() {
-      this.dialogKey++
-      this.dialog = true
-    },
-    hideDialog() {
-      this.dialog = false
-    },
-    saveClassDefinition() {
-      let {nodeId, ... classData} = {... this.classForm}
-      this.lf.setProperties(nodeId, {classData})
-      this.data = this.lf.getGraphRawData()
-      this.hideDialog()
-    },
-    handleAddFieldClick() {
-      this.classForm.fields.push({
-
-      })
-    },
-    handleAddMethodClick() {
-      this.classForm.methods.push({
-        
-      })
     }
   },
   beforeDestroy() {
     this.lf.destroy()
-  },
-  computed: {
-    classObjs() {
-      let objs = []
-      let nodes = this.data.nodes
-      if(nodes) {
-        objs = nodes.map(it => it.properties.classData).map(it => it.packageName + it.className)
-      }
-      return objs
-    },
-    classObjs2() {
-      let objs = ['String', 'Integer', 'Boolean', 'Number', 'Object']
-      return objs.concat(this.classObjs)
-    }
   }
 }
 </script>
 <template>
     <div>
       <el-text>模型名称：</el-text>
-      <el-input :model="modelName" style="width: 200px;"/>&nbsp;&nbsp;
+      <el-input :model="modelName" style="width: 600px;"/>&nbsp;&nbsp;
       <el-button @click="saveFun">保存</el-button>
     </div>
     <div ref="container" style="padding-top: 10px"></div>
-    <el-dialog :key="dialogKey" v-model="dialog" width="80%">
-      <el-form :model="classForm">
-        <el-form-item label="包名：">
-          <el-input v-model="classForm.packageName"/>
-        </el-form-item>
-        <el-form-item label="类名：">
-          <el-input v-model="classForm.className"/>
-        </el-form-item>
-        <el-form-item label="父类：">
-          <el-select v-model="classForm.parentClassNames" filterable :multiple="false" style="width:30%">
-            <el-option v-for="classObj in classObjs" :label="classObj" :value="classObj"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="接口：">
-          <el-select v-model="classForm.interfaceNames" filterable :multiple="true" style="width:100%">
-            <el-option v-for="classObj in classObjs" :label="classObj" :value="classObj"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="属性：">
-          <el-row style="width: 100%">
-            <el-col :span="4">属性名</el-col>
-            <el-col :span="4">类型</el-col>
-            <el-col :span="1">是否集合</el-col>
-            <el-col :span="14">描述</el-col>
-            <el-col :span="1">
-              <el-button @click="handleAddFieldClick" circle size="small">+</el-button>
-            </el-col>
-          </el-row>
-          <el-row v-for="field in classForm.fields" style="width: 100%">
-            <el-col :span="4"><el-input v-model="field.name"/></el-col>
-            <el-col :span="4">
-              <el-select v-model="field.type" filterable style="width: 100%">
-                <el-option v-for="classObj in classObjs2" :label="classObj" :value="classObj"/>
-              </el-select>
-            </el-col>
-            <el-col :span="1" style="text-align:center">
-              <el-switch v-model="field.collection"/>
-            </el-col>
-            <el-col :span="14">
-              <el-input v-model="field.desc"/>
-            </el-col>
-            <el-col :span="1"></el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item label="方法：" >
-          <el-row style="width: 100%">
-            <el-col :span="4">方法名</el-col>
-            <el-col :span="8">参数类型</el-col>
-            <el-col :span="4">返回类型</el-col>
-            <el-col :span="1">是否集合</el-col>
-            <el-col :span="6">描述</el-col>
-            <el-col :span="1">
-              <el-button @click="handleAddMethodClick" circle size="small">+</el-button>
-            </el-col>
-          </el-row>
-          <el-row v-for="method in classForm.methods" style="width: 100%">
-            <el-col :span="4"><el-input v-model="method.name"/></el-col>
-            <el-col :span="8">
-              <el-select v-model="method.args" filterable :multiple="true" style="width: 100%">
-                <el-option v-for="classObj in classObjs2" :label="classObj" :value="classObj"/>
-              </el-select>
-            </el-col>
-            <el-col :span="4">
-              <el-select v-model="method.returnType" filterable style="width: 100%">
-                <el-option v-for="classObj in classObjs2" :label="classObj" :value="classObj"/>
-              </el-select>
-            </el-col>
-            <el-col :span="1" style="text-align:center">
-              <el-switch v-model="method.collection"/>
-            </el-col>
-            <el-col :span="6"><el-input v-model="method.desc"/></el-col>
-            <el-col :span="1">&nbsp;</el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item label="描述：">
-          <el-input type="textarea" v-model="classForm.desc"/>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button type="primary" @click="hideDialog">取消</el-button>
-        <el-button type="primary" @click="saveClassDefinition">保存</el-button>
-      </template>
-    </el-dialog>
 </template>
-<style>
-.blogic_cd {
-  background-color: whitesmoke;
-  width: 100%;
-  max-width: 250px;
-  border: 2px solid black;
-  border-collapse: collapse
-}
-.blogic_cd td {
-  padding: 5px;
-  border: 2px solid black;
-  width: 100%;
-  max-width: 250px;
-}
-</style>
