@@ -12,6 +12,15 @@
   </body>
 
 <!-- 
-
+CREATE TABLE `model` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `product_id` bigint NOT NULL COMMENT '产品id',
+  `name` varchar(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '模型名称',
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '模型数据',
+  `create_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `update_time` datetime DEFAULT NULL COMMENT '结束时间',
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='模型表'
 -->
 </html>

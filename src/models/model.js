@@ -8,7 +8,7 @@ class Model {
         let productId = context.currentProduct.productId
         let queryStr = blogic.objToQuery(query)
         //return blogic.axios.get(`/Companies/${companyId}/Products/${productId}/Models?${queryStr}`)
-        return new Promise((r) => {r({code:0, data: []})}, () => {})
+        return new Promise((r) => {r({code:0, data: {total: 0, records:[]}})}, () => {})
     }
 
     static findOne(id) {
