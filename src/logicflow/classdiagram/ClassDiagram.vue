@@ -14,7 +14,7 @@ import * as blogic from '../../blogic'
 export default {
   props: {
     modelId: Number,
-    readonly: Boolean
+    silentMode: Boolean
   },
   data() {
     return {
@@ -115,7 +115,7 @@ export default {
     if(this.modelId) {
       Model.findOne(this.modelId).then(res => {
         _this.modelName = res.data.name  
-        _this.lf.render(res.data.data)
+        _this.lf.render(JSON.parse(res.data.data))
       })
     }else {
       _this.lf.render(this.data)
@@ -141,8 +141,8 @@ export default {
 <template>
     <div>
       <el-text>模型名称：</el-text>
-      <el-input :model="modelName" style="width: 600px;"/>&nbsp;&nbsp;
-      <el-button @click="saveFun">保存</el-button>
+      <el-input v-model="modelName" style="width: 600px;" :readonly="silentMode"/>&nbsp;&nbsp;
+      <el-button @click="saveFun" v-if="!silentMode">保存</el-button>
     </div>
     <div ref="container" style="padding-top: 10px"></div>
 </template>
