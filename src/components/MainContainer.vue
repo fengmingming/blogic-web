@@ -62,7 +62,7 @@ if(!blogic.isLogin()) {
                     <el-image :src="ProductPng"/>
                     <template #title>项目</template>
                 </el-menu-item>
-                <el-menu-item index="4" @click="routerPush('/model')" v-if="B.existDefProductId()">
+                <el-menu-item index="4" @click="routerPush('/models')" v-if="B.existDefProductId()">
                     <el-image :src="ModelPng"/>
                     <template #title>模型</template>
                 </el-menu-item>

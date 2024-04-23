@@ -12,7 +12,10 @@ import {Model} from '../../models/model.js'
 import * as blogic from '../../blogic'
 
 export default {
-  props: ['modelId'],
+  props: {
+    modelId: Number,
+    readonly: Boolean
+  },
   data() {
     return {
       modelName: '',
@@ -120,7 +123,7 @@ export default {
   },
   methods: {
     saveFun() {
-      let param = {id: this.modelId, name: this.modelName, data: this.lf.getGraphRawData()}
+      let param = {id: this.modelId, name: this.modelName, data: JSON.stringify(this.lf.getGraphRawData())}
       Model.save(param).then(res => {
         if(res?.code == 0) {
           blogic.showMessage('已保存')
