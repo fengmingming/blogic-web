@@ -43,16 +43,7 @@ export default {
     _this.lf.register(InterfaceDiagram)
     _this.lf.register(EnumDiagram)
     _this.lf.register(CommentDiagram)
-    _this.lf.setMenuConfig({
-      graphMenu: [],
-      nodeMenu:[{
-        text: '删除',
-        callback: function(node) {
-          _lf.deleteNode(node.id)
-        }
-      }]
-    })
-    _this.lf.setPatternItems([{
+    let patternItems = [{
       type: 'packagediagram',
       label: 'package',
       properties: {
@@ -111,7 +102,19 @@ export default {
         _this.lf.setDefaultEdgeType('bezier')
       },
       icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAcCAYAAAAJKR1YAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAKQSURBVFhH7ZbPS2JRFMe/FUWWWmgEhtGicCXu2rd36a6NC3fRMnCr/RURMzAt/TOMdmJJUf5CIYmMEtHnz0q9887lzJg+dSZ9NC7mA493znn3Pc65950fEMzj46N4eXlhTcvl5SVLWtLptKjX66z18vr6KhKJBGtaYrEYS0KUylUxQwKmhLJSwyzLU8N/h/7EP3Noa2sLR0dHrDEzM/idZV/F29ubvO/s7FAyycvr9Yqbmxs1U5vdLHt4eMDCwgLW19dJ1RCJRLC7u8taL8lkEpubm1haWmILEI/HcX5+jnA4jFQqhefnZxgMBqysrMBqteLi4gLVapVXA263G9++/9B3h+7u7sTe3p5QgxL7+/vi5ORE3N7eCkVReEUXp9Mpd8fv97NFCKVSF7o5dHBwII8hm82yZTSnp6csddGtMB4fHyOTyeDs7Iwt40GFUReHLBYLisUia+MzcaUOhUIIBALY3t5my+RM5BAdUzAYRK1WY4sO0JER+XxeFAoF1rR87Mr9GI1GlrRQt1fLAmtarq+vWer7qfmmFku1Wg6g0+lgdnbwhjocDllrhjHq3Y/Pev4hcmSYM8SwDxLqLMTSYEa92/9s+Mq/RD1m2O121iZn4rSfn59HLpeDzWZjy/iMnfbqyAqfz4fFxUUp6+HMLwbu0Pv7OxqNBiqVCtQ5G+pMjGg0iqurK9k0XS4XDg8PZUPUE1mp1egERdpqtTA3N4fl5WXZtakzU1c2m81QGyFMJhM8Hg/W1tb49S5PT0+yWtO00A99lzr9xsYGW3q5v7+XsxHxqdbRbDblEQ2CxggKgALqh9KaCicFNIhSqYTV1VUpf8qhr6Cs1CdPez1pd1rTtUPtdnu6HCKm6sgA4Ce2entoy7taogAAAABJRU5ErkJggg=='
-    }])
+    }]
+    if(!this.silentMode) {
+      _this.lf.setMenuConfig({
+        graphMenu: [],
+        nodeMenu:[{
+          text: '删除',
+          callback: function(node) {
+            _lf.deleteNode(node.id)
+          }
+        }]
+      })
+      _this.lf.setPatternItems(patternItems)
+    }
     if(this.modelId) {
       Model.findOne(this.modelId).then(res => {
         _this.modelName = res.data.name  
